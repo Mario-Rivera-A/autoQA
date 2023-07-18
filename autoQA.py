@@ -15,6 +15,8 @@ import os
 
 
 driver = webdriver.Chrome()
+wait = WebDriverWait(driver, 10)
+
 ##Función para hacer el login en el curso QA
 def login():
 
@@ -130,11 +132,88 @@ def screenshooter(carpeta,opcion):
         
     driver.execute_script("window.scrollTo(0, 0);")
     
-
+    
+# Queda pendiente
+def archivo():
+    from selenium.webdriver.common.action_chains import ActionChains
+    
+    editMode()
+    
+    wait = WebDriverWait(driver, 10)
+    
+    #click en el botón de añadir una actividad o recurso
+    actividades_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@data-action="open-chooser"]')))
+    actividades_btn.click()
+    
+    #click en el botón de archivos
+    archivo_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@data-internal="resource"]')))
+    archivo_btn.click()
+    
+    #Ingresar el nombre del archivo
+    nombre_archivo = "QA archivo"
+    driver.find_element(By.ID,"id_name").send_keys(nombre_archivo)
+    
+    #subir archivo
+    
+    input_archivo = wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@type="file"]')))
+    ruta_archivo = "C:/Users/mrive/Documents/Trabajo/automatización QA/Git/autoQA/Dummy PDF.pdf"
+    
+    input_archivo.send_keys(ruta_archivo)
+    
+    # acciones = ActionChains(driver)
+    # acciones.drag_and_drop(input_archivo, ruta_archivo)
+    # acciones.perform()
+    
+def area_textos_medios():
+    
+    btnactividades()
+    
+    # click en el botón de área de texto
+    area_textos_medios_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@data-internal="label"]')))
+    area_textos_medios_btn.click()
+    
+    input_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@id="id_introeditoreditable"]')))
+    input_btn.send_keys("QA área de texto")
+    
+    display_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton2')))
+    display_btn.click()
+    
+    
+    
+    
+def btnactividades():
+    editMode()
+    actividades_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@data-action="open-chooser"]')))
+    actividades_btn.click()
+    
+    
+    
+    
+    
+# def actividades_recursos():
+#     editMode()
+    
+#     df = []
+#     # time.sleep(5)
+#     wait = WebDriverWait(driver, 10)
+    
+#     add = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[@data-action = 'open-chooser']")))
+#     add.click()
+    
+#     actividades = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@role = 'menubar']")))
+    
+#     for actividad in actividades:
+#         valor = actividad.get_attribute("arial-label")
+#         print(valor)
+    
 
 login()
-formatQA()
-# actividades_recursos()
+# formatQA()
+
+# queda en pausa
+# archivo()
+
+area_textos_medios()
 
 
 time.sleep(5)
