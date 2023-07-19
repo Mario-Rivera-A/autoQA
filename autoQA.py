@@ -41,6 +41,8 @@ def editMode():
     if not element.is_selected():
         print(element.text)
         element.click()
+    else:
+        return 
 
 #QA de formatos de curso
 def formatQA():
@@ -182,6 +184,8 @@ def area_textos_medios():
     
 def autoseleccion_grupos():
     
+    editMode()
+    
     btnactividades()
     
     # click en el botón de autoseleccion
@@ -233,12 +237,70 @@ def autoseleccion_grupos():
     screenshooter("autoseleccion_grupos", "Autoseleccion_grupos3")
     
     
+def base_de_datos():
     
+    btnactividades()
+    
+    grupo_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@data-internal="data"]')))
+    grupo_btn.click()   
+    
+    nombre_actividad = "QA base de datos"
+    input_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+    input_actividad.send_keys(nombre_actividad)
+    
+    display_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    display_btn.click()
+    
+    creacion_btn = wait.until(EC.element_to_be_clickable((By.ID, 'action-menu-toggle-2')))
+    creacion_btn.click()
+    
+    opcion_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@aria-labelledby="actionmenuaction-15"]')))
+    opcion_btn.click()
+    
+    nombre_campo = "QA campo"
+    desc_campo = "QA descripción"
+    input_nombre_campo = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="name"]')))
+    input_nombre_campo.send_keys(nombre_campo)
+    input_desc_campo = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="description"]')))
+    input_desc_campo.send_keys(desc_campo)
+    
+    submit_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@class="btn btn-primary" and @type = "submit"]')))
+    submit_btn.click()
+    
+    screenshooter("base_de_datos", "campo")
+    
+    plantillas = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@id = "sticky-footer"]/div/a')))
+    plantillas.click()
+    
+    submit_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@class="btn btn-primary" and @type = "submit"]')))
+    submit_btn.click()
+    
+    screenshooter("base_de_datos", "plantilla")
+    
+    btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//li[@data-key="modulepage"]')))
+    btn.click()
+    
+    add_entrada = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@type = "submit" and @class = "btn btn-primary"]')))
+    add_entrada.click()
+    
+    nombre_registro = "QA registro"
+    input_registro = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@name[starts-with(., "field_")]]')))
+    input_registro.send_keys(nombre_registro)
+    
+    save_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@name="saveandview" and @type = "submit"]')))
+    save_btn.click()
+    
+    screenshooter("base_de_datos", "registro")
+    
+    back_to_curso()
     
 def btnactividades():
     editMode()
     actividades_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@data-action="open-chooser"]')))
-    actividades_btn.click()
+    actividades_btn.click()  
+      
+def back_to_curso():
+    driver.get("http://localhost/course/view.php?id=2594#section-0")
     
     
     
@@ -272,7 +334,10 @@ login()
 # area_textos_medios()
 
 # Listo 
-autoseleccion_grupos()
+# autoseleccion_grupos()
+
+# Listo
+base_de_datos()
 
 
 time.sleep(5)
