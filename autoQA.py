@@ -20,7 +20,7 @@ wait = WebDriverWait(driver, 10)
 ##Función para hacer el login en el curso QA
 def login():
 
-    driver.get("http://localhost/course/view.php?id=2602")
+    driver.get("http://localhost/course/view.php?id=2594#section-0")
     driver.maximize_window()
 
     title = driver.title
@@ -128,7 +128,7 @@ def screenshooter(carpeta,opcion):
         driver.execute_script("window.scrollTo(0, "+str(posicion_desplazamiento)+");")
         posicion_desplazamiento += altura_desplazamiento
         time.sleep(1)
-        driver.save_screenshot(directorio_capturas+"/screenshot_"+opcion+str(posicion_desplazamiento)+".png")
+        driver.save_screenshot(directorio_capturas+"/screenshot_"+opcion+"_"+str(posicion_desplazamiento)+".png")
         
     driver.execute_script("window.scrollTo(0, 0);")
     
@@ -178,6 +178,60 @@ def area_textos_medios():
     display_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton2')))
     display_btn.click()
     
+    screenshooter("area_textos_medios", "Area_de_textos_y_medios")
+    
+def autoseleccion_grupos():
+    
+    btnactividades()
+    
+    # click en el botón de autoseleccion
+    grupo_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@data-internal="groupselect"]')))
+    grupo_btn.click()   
+    
+    #ingresar el nombre de la actividad
+    titulo_actividad = "QA autoselección"
+    input_nombre = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+    input_nombre.send_keys(titulo_actividad)
+    
+    #guardar y mostrar
+    
+    display_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    display_btn.click()
+    
+    screenshooter("autoseleccion_grupos", "Autoseleccion_grupos")
+    
+    administrar_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[text()="Administrar grupos"]')))
+    administrar_btn.click()
+    
+    # Crear grupos automáticamente
+    creacion_grupos_btn = wait.until(EC.element_to_be_clickable((By.ID, 'showautocreategroupsform')))
+    creacion_grupos_btn.click()
+    
+    input_esquema = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_namingscheme"]')))
+    
+    if input_esquema.get_attribute('value'):
+        # Borrar el valor predefinido
+        input_esquema.clear()   
+    
+    input_esquema.send_keys("Grupo #")
+    
+    input_cantidad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_number"]')))
+    input_cantidad.send_keys("2")
+    
+    send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    send_btn.click()
+    
+    time.sleep(5)
+    screenshooter("autoseleccion_grupos", "Autoseleccion_grupos2")
+    
+    back_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//li[@data-key="coursehome"]')))
+    back_btn.click()
+    
+    actividad_btn = wait.until(EC.element_to_be_clickable((By.PARTIAL_LINK_TEXT, str(titulo_actividad))))
+    actividad_btn.click()
+    
+    screenshooter("autoseleccion_grupos", "Autoseleccion_grupos3")
+    
     
     
     
@@ -191,29 +245,34 @@ def btnactividades():
     
     
 # def actividades_recursos():
-#     editMode()
+    # editMode()
     
-#     df = []
-#     # time.sleep(5)
-#     wait = WebDriverWait(driver, 10)
+    # df = []
+    # # time.sleep(5)
+    # wait = WebDriverWait(driver, 10)
     
-#     add = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[@data-action = 'open-chooser']")))
-#     add.click()
+    # add = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[@data-action = 'open-chooser']")))
+    # add.click()
     
-#     actividades = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@role = 'menubar']")))
+    # actividades = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@role = 'menubar']")))
     
-#     for actividad in actividades:
-#         valor = actividad.get_attribute("arial-label")
-#         print(valor)
+    # for actividad in actividades:
+    #     valor = actividad.get_attribute("arial-label")
+    #     print(valor)
     
 
 login()
+# Listo
 # formatQA()
 
 # queda en pausa
 # archivo()
 
-area_textos_medios()
+# Listo
+# area_textos_medios()
+
+# Listo 
+autoseleccion_grupos()
 
 
 time.sleep(5)
