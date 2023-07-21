@@ -12,8 +12,6 @@ from credenciales import USER, PASS
 
 import os
 
-
-
 driver = webdriver.Chrome()
 wait = WebDriverWait(driver, 10)
 
@@ -36,13 +34,18 @@ def login():
 def editMode():
     wait = WebDriverWait(driver, 10)
 
-    element = wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="usernavigation"]/li/form/div')))
-
-    if not element.is_selected():
-        print(element.text)
+    element = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="usernavigation"]/li/form/div')))
+    
+    element_2 = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="usernavigation"]/li/form/div/label')))
+    
+    if 'text-primary' in element_2.get_attribute('class'):
+        print("Modo de edición activado, no es necesario activarlo")
+    else: 
+        print("Modo de edición desactivado, activando...")
         element.click()
-    else:
-        return 
+    
+    driver.refresh()
+
 
 #QA de formatos de curso
 def formatQA():
@@ -79,7 +82,7 @@ def formatQA():
         displaybtn = wait.until(EC.element_to_be_clickable((By.ID, 'id_saveanddisplay')))
         displaybtn.click()
         
-        # screenshooter("formatos_de_curso", opcion)
+        screenshooter("formatos_de_curso", opcion)
         
         if(opcion == "singleactivity"):
             btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//li[@data-key="course"]')))
@@ -105,41 +108,15 @@ def formatQA():
             
             displaybtn = wait.until(EC.element_to_be_clickable((By.ID, 'id_saveanddisplay')))
             displaybtn.click()
+    
+    back_to_curso()
 
-   
-             
-def screenshooter(carpeta,opcion):
-    ##Sacar screenshots de las páginas##
-
-    altura_total = driver.execute_script("return document.body.scrollHeight")
-    
-    print(altura_total)
-    
-    altura_desplazamiento = 500
-    
-    posicion_desplazamiento = 0
-    
-    directorio_capturas = "C:/Users/mrive/Documents/Trabajo/automatización QA/Git/"+carpeta
-    
-    if not os.path.exists(directorio_capturas):
-        # Crear el directorio
-        os.makedirs(directorio_capturas)
-
-    
-    while posicion_desplazamiento < (altura_total-1000):
-        driver.execute_script("window.scrollTo(0, "+str(posicion_desplazamiento)+");")
-        posicion_desplazamiento += altura_desplazamiento
-        time.sleep(1)
-        driver.save_screenshot(directorio_capturas+"/screenshot_"+opcion+"_"+str(posicion_desplazamiento)+".png")
-        
-    driver.execute_script("window.scrollTo(0, 0);")
-    
-    
-# Queda pendiente
+# Listo
 def archivo():
-    from selenium.webdriver.common.action_chains import ActionChains
     
     editMode()
+    
+    directorio_archivo = "C:/Users/mrive/Documents/Trabajo/automatización QA/Git/autoQA/Dummy PDF.pdf"
     
     wait = WebDriverWait(driver, 10)
     
@@ -155,17 +132,26 @@ def archivo():
     nombre_archivo = "QA archivo"
     driver.find_element(By.ID,"id_name").send_keys(nombre_archivo)
     
-    #subir archivo
+    #subir archivo desde el filepicker
+    
+    agregar_archivo = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[starts-with(@class,"fp-btn-add")]')))
+    agregar_archivo.click()
     
     input_archivo = wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@type="file"]')))
-    ruta_archivo = "C:/Users/mrive/Documents/Trabajo/automatización QA/Git/autoQA/Dummy PDF.pdf"
+    input_archivo.send_keys(directorio_archivo)
     
-    input_archivo.send_keys(ruta_archivo)
+    uploadfile = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@class="fp-upload-btn btn-primary btn"]')))
+    uploadfile.click()
     
-    # acciones = ActionChains(driver)
-    # acciones.drag_and_drop(input_archivo, ruta_archivo)
-    # acciones.perform()
+    submit_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    submit_btn.click()
     
+    screenshooter("archivo", "Archivo_subido")
+    
+    
+    chaoactividad(nombre_archivo, "archivo")
+    
+# QA de area de textos y medios
 def area_textos_medios():
     
     btnactividades()
@@ -180,11 +166,12 @@ def area_textos_medios():
     display_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton2')))
     display_btn.click()
     
-    screenshooter("area_textos_medios", "Area_de_textos_y_medios")
+    # screenshooter("area_textos_medios", "Area_de_textos_y_medios")
     
+    chaoactividad("QA área de texto", "area_textos_medios")
+    
+# QA de autoselección de grupos
 def autoseleccion_grupos():
-    
-    editMode()
     
     btnactividades()
     
@@ -225,7 +212,6 @@ def autoseleccion_grupos():
     send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
     send_btn.click()
     
-    time.sleep(5)
     screenshooter("autoseleccion_grupos", "Autoseleccion_grupos2")
     
     back_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//li[@data-key="coursehome"]')))
@@ -236,13 +222,15 @@ def autoseleccion_grupos():
     
     screenshooter("autoseleccion_grupos", "Autoseleccion_grupos3")
     
+    chaoactividad(titulo_actividad, "autoseleccion_grupos")
     
+# QA de base de datos
 def base_de_datos():
     
     btnactividades()
     
-    grupo_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@data-internal="data"]')))
-    grupo_btn.click()   
+    data_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@data-internal="data"]')))
+    data_btn.click()   
     
     nombre_actividad = "QA base de datos"
     input_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
@@ -292,18 +280,326 @@ def base_de_datos():
     
     screenshooter("base_de_datos", "registro")
     
-    back_to_curso()
+    chaoactividad(nombre_actividad, "base_de_datos")
+ 
+# QA de carpeta   
+def carpeta():
     
+    btnactividades()
+    
+    folder_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@data-internal="folder"]')))
+    folder_btn.click()   
+    
+    nombre_actividad = "QA carpeta"
+    input_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+    input_actividad.send_keys(nombre_actividad)
+    
+    directorio_archivo = "C:/Users/mrive/Documents/Trabajo/automatización QA/Git/autoQA/Dummy PDF.pdf"
+    
+    agregar_archivo = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[starts-with(@class,"fp-btn-add")]')))
+    agregar_archivo.click()
+    
+    input_archivo = wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@type="file"]')))
+    input_archivo.send_keys(directorio_archivo)
+    
+    uploadfile = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@class="fp-upload-btn btn-primary btn"]')))
+    uploadfile.click()
+    
+    submit_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    submit_btn.click()
+    
+    screenshooter("carpeta", "carpeta")
+    
+    chaoactividad(nombre_actividad, "carpeta")
+    
+# QA de certificado
+def certificado():
+    
+    btnactividades()
+    
+    certificado_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@data-internal="customcert"]')))
+    certificado_btn.click() 
+    
+    nombre_actividad = "QA certificado"
+    input_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+    input_actividad.send_keys(nombre_actividad)
+    
+    submit_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    submit_btn.click()
+    
+    screenshooter("certificado", "certificado")
+    
+    chaoactividad(nombre_actividad, "certificado")
+      
+# QA de chat
+def chat():
+    
+    btnactividades()
+    
+    chat_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@data-internal="chat"]')))
+    chat_btn.click()   
+    
+    nombre_actividad = "QA chat"
+    input_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+    input_actividad.send_keys(nombre_actividad)
+    
+    submit_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    submit_btn.click()
+    
+    screenshooter("chat", "chat")
+    
+    entrar_chat = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@class="btn btn-primary"]')))
+    entrar_chat.click()
+    
+    #cambiar de ventana
+    ventana_original = driver.current_window_handle
+    ventanas_abiertas = driver.window_handles
+    nueva_ventana = None
+    for ventana in ventanas_abiertas:
+        if ventana != ventana_original:
+            nueva_ventana = ventana
+            break
+    driver.switch_to.window(nueva_ventana)
+    
+    # Escribimos en el chat
+    texto = "Mensaje de prueba"
+    input_texto = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="text"]')))
+    input_texto.send_keys(texto)
+    
+    send_texto = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="button"]')))
+    send_texto.click()
+    
+    time.sleep(1)
+    
+    screenshooter("chat", "chat2")
+    
+    #Cerramos ventana de chat
+    driver.close()
+    driver.switch_to.window(ventana_original)
+    chaoactividad(nombre_actividad, "chat")
+    
+    print("ya estamos en la nueva ventana")
+   
+# QA de consulta
+def consulta():
+    
+    btnactividades()
+    
+    consulta_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@data-internal="choice"]')))
+    consulta_btn.click()
+    
+    nombre_actividad = "QA consulta"
+    input_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+    input_actividad.send_keys(nombre_actividad)
+    
+    opcion_1 = "Esta es la opción 1"
+    input_opcion_1 = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_option_0"]')))
+    input_opcion_1.send_keys(opcion_1)
+    
+    submit_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    submit_btn.click()
+    
+    try:
+        matricular_btn = wait.until(EC.visibility_of_element_located((By.XPATH, '//button[@type="submit" and @class="btn btn-secondary"]')))
+        print("Tienes que matricularte")
+        matricular_btn.click()
+        
+        # Parte que podría llegar a cambiar
+        
+        matricular_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+        matricular_btn.click()
+        
+        driver.refresh()
+        
+        screenshooter("consulta", "consulta")
+
+    except :
+        print("Ya estás matriculado")
+        screenshooter("consulta", "consulta")
+        
+    chaoactividad(nombre_actividad, "consulta")
+    
+# QA cuestionario
+def cuestionario():
+    from selenium.webdriver.support.ui import Select
+    
+    
+    
+    btnactividades()
+    cuestionario_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@data-internal="quiz"]')))
+    cuestionario_btn.click()
+    
+    nombre_actividad = "QA cuestionario"
+    input_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+    
+    if input_actividad.get_attribute('value'):
+        # Borrar el valor predefinido
+        input_esquema.clear()  
+    
+    input_actividad.send_keys(nombre_actividad)
+    
+    submit_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    submit_btn.click()
+    
+    agregar_pregunta = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@class="btn btn-secondary"]')))
+    agregar_pregunta.click()
+    
+    # Click en el dropdown Agregar
+    agregar_pregunta = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@class = "dropdown"]/a[starts-with(@id,"action-menu") and @role = "button"]')))
+    agregar_pregunta.click()
+    
+    #Agregamos una pregunta 
+    agregar_pregunta = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@data-action="addquestion"]')))
+    agregar_pregunta.click()
+    
+    #Agregamos una pregunta de opción múltiple
+    agregar_pregunta = wait.until(EC.element_to_be_clickable((By.XPATH, '//span[@class="typename" and text()="Opción múltiple"]')))
+    agregar_pregunta.click()
+    
+    send_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="submit" and @name="submitbutton"]')))
+    send_btn.click()
+    
+    nombre_pregunta = "QA pregunta 1"
+    enunciado_pregunta = "Enunciado de la pregunta 1"
+    # Ingresamos el nombre de la pregunta
+    input_nombre_pregunta_1 = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@name="name"]')))
+    input_nombre_pregunta_1.send_keys(nombre_pregunta)
+    # Ingresamos el enunciado de la pregunta
+    input_enunciado_pregunta_1 = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@id="id_questiontexteditable"]')))
+    input_enunciado_pregunta_1.send_keys(enunciado_pregunta)
+    
+    # Respuestas que queremos agregar
+    texto_opcion_1 = "Opción 1"
+    input_opcion_1 = wait.until(EC.element_to_be_clickable((By.ID, 'id_answer_0editable')))
+    input_opcion_1.send_keys(texto_opcion_1)
+    
+    # Calificacion de la pregunta (100%)
+    
+    selector = Select(wait.until(EC.element_to_be_clickable((By.ID, 'id_fraction_0'))))
+    selector.select_by_value("1.0")
+    
+    texto_opcion_2 = "Opción 2"
+    input_opcion_2 = wait.until(EC.element_to_be_clickable((By.ID, 'id_answer_1editable')))
+    input_opcion_2.send_keys(texto_opcion_2)
+    
+    selector = Select(wait.until(EC.element_to_be_clickable((By.ID, 'id_fraction_1'))))
+    selector.select_by_value("1.0")
+    
+    send_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="submit" and @name="submitbutton"]')))
+    send_btn.click()
+    
+    ## Agregamos una segunda pregunta de verdadero o falso ##
+    # Hacemos click en el dropdown Agregar
+    agregar_pregunta = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@class = "dropdown"]/a[starts-with(@id,"action-menu") and @role = "button"]')))
+    agregar_pregunta.click()
+    
+    #Agregamos una pregunta 
+    agregar_pregunta = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@data-action="addquestion"]')))
+    agregar_pregunta.click()
+    
+    agregar_pregunta = wait.until(EC.element_to_be_clickable((By.XPATH, '//span[@class="typename" and text()="Verdadero/Falso"]')))
+    agregar_pregunta.click()
+    
+    send_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="submit" and @name="submitbutton"]')))
+    send_btn.click()
+    
+    nombre_pregunta = "QA pregunta 2"
+    enunciado_pregunta = "Enunciado de la pregunta 2, verdadero o falso"
+    # Ingresamos el nombre de la pregunta
+    input_nombre_pregunta_2 = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@name="name"]')))
+    input_nombre_pregunta_2.send_keys(nombre_pregunta)
+    # Ingresamos el enunciado de la pregunta
+    input_enunciado_pregunta_2 = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@id="id_questiontexteditable"]')))
+    input_enunciado_pregunta_2.send_keys(enunciado_pregunta)
+    
+    send_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="submit" and @name="submitbutton"]')))
+    send_btn.click()
+    
+    ## Vista del cuestionario ##
+    # Click en cuestionario
+    btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//li[@data-key="modulepage"]')))
+    btn.click()
+    
+    # Click en vista previa del cuestionario
+    vista = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@type = "submit" and @class="btn btn-primary"]')))
+    vista.click()
+    
+    screenshooter("cuestionario", "cuestionario")
+    
+    # Terminar intento
+    end_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type = "submit" and @name = "next"]')))
+    end_btn.click()
+    
+    screenshooter("cuestionario", "cuestionario_finalizado")
+    
+    chaoactividad(nombre_actividad, "cuestionario")
+    
+    
+    
+    
+    
+    
+# Saca fotos de las páginas
+def screenshooter(carpeta,opcion):
+    ##Sacar screenshots de las páginas##
+
+    altura_total = driver.execute_script("return document.body.scrollHeight")
+    
+    print(altura_total)
+    
+    altura_desplazamiento = 500
+    
+    posicion_desplazamiento = 0
+    
+    directorio_capturas = "C:/Users/mrive/Documents/Trabajo/automatización QA/Git/"+carpeta
+    
+    if not os.path.exists(directorio_capturas):
+        # Crear el directorio
+        os.makedirs(directorio_capturas)
+    if opcion == "display":
+        driver.execute_script("window.scrollTo(0, "+str(500)+");")
+        time.sleep(1)
+        driver.save_screenshot(directorio_capturas+"/screenshot_"+opcion+"_"+str(posicion_desplazamiento)+".png")
+
+    elif altura_total > 1000:
+        while posicion_desplazamiento < (altura_total-1000):
+            driver.execute_script("window.scrollTo(0, "+str(posicion_desplazamiento)+");")
+            posicion_desplazamiento += altura_desplazamiento
+            time.sleep(1)
+            driver.save_screenshot(directorio_capturas+"/screenshot_"+opcion+"_"+str(posicion_desplazamiento)+".png")
+    else: 
+        driver.save_screenshot(directorio_capturas+"/screenshot_"+opcion+"_"+str(posicion_desplazamiento)+".png")
+        
+            
+    driver.execute_script("window.scrollTo(0, 0);")    
+    
+# Generalización para acceder a las actividades y recursos
 def btnactividades():
     editMode()
     actividades_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@data-action="open-chooser"]')))
     actividades_btn.click()  
       
+# Generalización para volver al curso
 def back_to_curso():
     driver.get("http://localhost/course/view.php?id=2594#section-0")
     
+def chaoactividad(nombre,carpeta):
+    back_to_curso()
     
+    if not carpeta == None:
+        screenshooter(carpeta, "display")   
     
+    editMode()
+    print(nombre)
+    btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[contains(@data-activityname, "'+nombre+'")]/div/div/div/div/div[starts-with(@id, "action-menu-")]')))
+    btn.click()
+    
+    delete_btn = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[contains(@data-activityname, "'+nombre+'")]/div/div/div/div/div[starts-with(@id, "action-menu-")]/div/div/a[@data-action="delete"]')))
+    delete_btn.click()
+    # /div/div/div/div/div[starts-with(@id, "action-menu-")]
+    
+    yes_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@type="button" and @class="btn btn-primary"]')))
+    yes_btn.click()
     
     
 # def actividades_recursos():
@@ -322,12 +618,23 @@ def back_to_curso():
     #     valor = actividad.get_attribute("arial-label")
     #     print(valor)
     
-
+def prueba():
+    formatQA()
+    archivo()
+    area_textos_medios()
+    autoseleccion_grupos()
+    base_de_datos()
+    certificado()
+    chat()
+    consulta()
+    
 login()
+# prueba()
+
 # Listo
 # formatQA()
 
-# queda en pausa
+# Listo
 # archivo()
 
 # Listo
@@ -337,7 +644,26 @@ login()
 # autoseleccion_grupos()
 
 # Listo
-base_de_datos()
+# base_de_datos()
+
+# Listo
+# certificado()
+
+# Listo
+# chat()
+
+# Listo
+# consulta()
+
+# Listo
+# cuestionario()
+
+# for i in range(0, 4):
+#     chaoactividad("QA cuestionario", None)
+
+
+
+
 
 
 time.sleep(5)
