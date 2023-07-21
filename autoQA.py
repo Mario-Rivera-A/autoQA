@@ -551,9 +551,182 @@ def cuestionario():
     
     chaoactividad(nombre_actividad, "cuestionario")
     
-
+# QA de cuestionario offline
+def cuestionarioofline():
+    
+    btnactividades()
+    
+    consulta_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@data-internal="offlinequiz"]')))
+    consulta_btn.click()
+    
+    nombre_actividad = "QA cuestionario offline"
+    input_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+    input_actividad.send_keys(nombre_actividad)
+    
+    # Guardar cambios y mostrar
+    send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    send_btn.click()
+    
+    screenshooter("cuestionarioofline", "cuestionarioofline")
+    
+    chaoactividad(nombre_actividad, "cuestionarioofline")
+    
+# QA de encuesta
+def encuesta():
+    from selenium.webdriver.support.ui import Select
     
     
+    btnactividades()
+    
+    consulta_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@data-internal="feedback"]')))
+    consulta_btn.click()
+    
+    nombre_actividad = "QA encuesta"
+    input_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+    input_actividad.send_keys(nombre_actividad)
+    
+    # Guardar cambios y mostrar
+    send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    send_btn.click()
+    
+    # Editar preguntas
+    edit_btn = driver.find_elements(By.XPATH, '//a[@class="btn btn-secondary"]')
+    # print(len(edit_btn))
+    edit_btn[0].click()
+    
+    # Se selecciona una encuesta de selección múltiple
+    selector = Select(wait.until(EC.element_to_be_clickable((By.XPATH, '//select[contains(@id, "single_select") ]'))))
+    selector.select_by_value("multichoice")
+    
+    # Nombre de la pregunta 
+    nombre_pregunta = "Pregunta 1"
+    input_pregunta = wait.until(EC.element_to_be_clickable((By.ID, 'id_name')))
+    input_pregunta.send_keys(nombre_pregunta)
+    
+    # Valores de la elección múltiple
+    valores = str("Pregunta 1 \nPregunta 2 \nPregunta 3")
+    input_valores = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@data-fieldtype = "textarea"]/textarea[@id = "id_values"]')))
+    input_valores.send_keys(valores)
+    
+    # Guardar cambios
+    
+    send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_save_item')))
+    send_btn.click()
+    
+    ## Camino a responder la encuesta ##
+    # Click en Encuesta
+    encuesta_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//li[@data-key="modulepage"]')))
+    encuesta_btn.click()
+    
+    screenshooter("encuesta", "vista previa")
+    
+    # Responder las preguntas
+    btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@class = "navitem"]/a[@class = "btn btn-primary"]')))
+    btn.click()
+    
+    screenshooter("encuesta", "encuesta")
+    
+    # Enviar la respuesta
+    send_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type = "submit" and @id = "id_savevalues"]')))
+    send_btn.click()
+    
+    # Encuesta respondida
+    
+    screenshooter("encuesta", "encuesta_respondida")
+    
+    chaoactividad(nombre_actividad, "encuesta")
+    
+def encuesta2():
+    
+    btnactividades()
+    
+    encuesta_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@data-internal="questionnaire"]')))
+    encuesta_btn.click()
+    
+    nombre_actividad = "QA encuesta (questionnaire)"
+    # Ingresamos el nombre de la actividad
+    input_nombre_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+    input_nombre_actividad.send_keys(nombre_actividad)
+    
+    # Guardar cambios y mostrar
+    send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    send_btn.click()
+    
+    ## Añadimos preguntas ## 
+    btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@class="btn btn-primary"]')))
+    btn.click()
+    
+    btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="submit" and @name = "addqbutton"]')))
+    btn.click()
+    
+    # Nombre de la pregunta
+    nombre_pregunta = "Pregunta 1"
+    texto_pregunta = "Texto de la pregunta 1"
+    respuestas_posibles = "Respuesta 1 \nRespuesta 2 \nRespuesta 3"
+    # Ingresamos el nombre de la pregunta
+    input_nombre_pregunta = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+    input_nombre_pregunta.send_keys(nombre_pregunta)
+    # Ingresamos el texto de la pregunta
+    input_texto_pregunta = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@id="id_contenteditable"]')))
+    input_texto_pregunta.send_keys(texto_pregunta)
+    # Ingresamos las respuestas posibles
+    input_respuestas_posibles = wait.until(EC.element_to_be_clickable((By.XPATH, '//textarea[@id="id_allchoices"]')))
+    input_respuestas_posibles.send_keys(respuestas_posibles)
+    
+    # Guardamos cambios
+    send_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="submit" and @name = "submitbutton"]')))
+    send_btn.click()
+    
+    ## Camino a responder la encuesta ##
+    # Click en Encuesta
+    encuesta_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//li[@data-key="modulepage"]')))
+    encuesta_btn.click()
+    
+    screenshooter("questionnaire", "vista previa")
+    
+    # Click en responda las preguntas
+    btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@class = "complete"]/a[@class = "btn btn-primary"]')))
+    btn.click()
+    
+    screenshooter("questionnaire", "encuesta")
+    
+    # Enviamos la encuesta
+    send_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type = "submit" and contains(@class, "btn-primary")]')))
+    send_btn.click()
+    
+    screenshooter("questionnaire", "encuesta_respondida")
+    
+    
+    # Click en continuar para ver los resultados
+    send_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@type = "submit" and @class= "btn btn-secondary"]')))
+    send_btn.click()
+    
+    screenshooter("questionnaire", "resultados")
+    
+    chaoactividad(nombre_actividad, "questionnaire")
+    
+def encuestapredefinida():
+    from selenium.webdriver.support.ui import Select
+    
+    btnactividades()
+    
+    encuesta_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@data-internal="survey"]')))
+    encuesta_btn.click()
+    
+    nombre_actividad = "QA encuesta predefinida"
+    # Ingresamos el nombre de la actividad
+    input_nombre_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+    input_nombre_actividad.send_keys(nombre_actividad)
+    
+    selector = Select(wait.until(EC.element_to_be_clickable((By.XPATH, '//select[@id="id_template"]'))))
+    selector.select_by_index(1)
+    
+    # Guardar cambios y mostrar
+    send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    send_btn.click()
+    
+    screenshooter("encuestapredefinida", "encuestapredefinida")
+    chaoactividad(nombre_actividad, "encuestapredefinida")
     
     
 # Saca fotos de las páginas
@@ -645,6 +818,9 @@ def prueba():
     chat()
     consulta()
     cuestionario()
+    encuesta()
+    encuesta2()
+    encuestapredefinida()
     
 login()
 # prueba()
@@ -676,8 +852,20 @@ login()
 # Listo
 # cuestionario()
 
-# for i in range(0, 10):
-#     chaoactividad("QA cuestionario", None)
+# Listo
+# cuestionarioofline()
+
+# Listo
+# encuesta()
+
+# Listo
+# encuesta2()
+
+# Listo
+# encuestapredefinida()
+
+for i in range(0, 1):
+    chaoactividad("QA encuesta predefinida", None)
 
 
 
