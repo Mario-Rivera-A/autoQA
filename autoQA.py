@@ -423,9 +423,8 @@ def consulta():
 def cuestionario():
     from selenium.webdriver.support.ui import Select
     
-    
-    
     btnactividades()
+    
     cuestionario_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@data-internal="quiz"]')))
     cuestionario_btn.click()
     
@@ -524,6 +523,16 @@ def cuestionario():
     vista = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@type = "submit" and @class="btn btn-primary"]')))
     vista.click()
     
+    # Resolvemos el cuestionario
+    
+    # respuesta = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type = "radio" and contains(@aria-labelledby, "answer0_label") ]')))
+    
+    respuesta = wait.until(EC.element_to_be_clickable((By.XPATH, '//p[text()= "'+texto_opcion_1+'"]')))
+    respuesta.click()
+    
+    respuesta = wait.until(EC.element_to_be_clickable((By.XPATH, '//label[text()= "Falso"]')))
+    respuesta.click()
+    
     screenshooter("cuestionario", "cuestionario")
     
     # Terminar intento
@@ -532,9 +541,17 @@ def cuestionario():
     
     screenshooter("cuestionario", "cuestionario_finalizado")
     
+    end_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@type = "submit" and @class = "btn btn-primary"]')))
+    end_btn.click()
+    
+    end_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@type = "button" and @class = "btn btn-primary"]')))
+    end_btn.click()
+    
+    screenshooter("cuestionario", "revisión")
+    
     chaoactividad(nombre_actividad, "cuestionario")
     
-    
+
     
     
     
@@ -627,6 +644,7 @@ def prueba():
     certificado()
     chat()
     consulta()
+    cuestionario()
     
 login()
 # prueba()
@@ -658,7 +676,7 @@ login()
 # Listo
 # cuestionario()
 
-# for i in range(0, 4):
+# for i in range(0, 10):
 #     chaoactividad("QA cuestionario", None)
 
 
