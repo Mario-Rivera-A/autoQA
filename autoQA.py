@@ -18,7 +18,7 @@ wait = WebDriverWait(driver, 10)
 ##Función para hacer el login en el curso QA
 def login():
 
-    driver.get("http://localhost/course/view.php?id=2594#section-0")
+    driver.get("http://localhost/course/view.php?id=2602")
     driver.maximize_window()
 
     title = driver.title
@@ -32,6 +32,7 @@ def login():
 
 #seleccionar el modo de edición si este está desactivado
 def editMode():
+    time.sleep(1)
     wait = WebDriverWait(driver, 10)
 
     element = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="usernavigation"]/li/form/div')))
@@ -48,6 +49,7 @@ def editMode():
 
 # Para algunas actividades necesitamos desactivar el modo de edición
 def editModeOff():
+    time.sleep(1)
     wait = WebDriverWait(driver, 10)
 
     element = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="usernavigation"]/li/form/div')))
@@ -60,8 +62,7 @@ def editModeOff():
     else: 
         print("Modo de edición desactivado, no es necesario desactivarlo")
     
-    driver.refresh()
-    
+    driver.refresh()   
 
 #QA de formatos de curso
 def formatQA():
@@ -129,20 +130,11 @@ def formatQA():
 
 # Listo
 def archivo():
-    
-    editMode()
-    
     directorio_archivo = "C:/Users/mrive/Documents/Trabajo/automatización QA/Git/autoQA/Dummy PDF.pdf"
     
     wait = WebDriverWait(driver, 10)
     
-    #click en el botón de añadir una actividad o recurso
-    actividades_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@data-action="open-chooser"]')))
-    actividades_btn.click()
-    
-    #click en el botón de archivos
-    archivo_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@data-internal="resource"]')))
-    archivo_btn.click()
+    btnactividades("resource")
     
     #Ingresar el nombre del archivo
     nombre_archivo = "QA archivo"
@@ -164,7 +156,6 @@ def archivo():
     
     screenshooter("archivo", "Archivo_subido")
     
-    
     chaoactividad(nombre_archivo, "archivo")
     
 # QA de area de textos y medios
@@ -178,7 +169,7 @@ def area_textos_medios():
     display_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton2')))
     display_btn.click()
     
-    screenshooter("area_textos_medios", "Area_de_textos_y_medios")
+    # screenshooter("area_textos_medios", "Area_de_textos_y_medios")
     
     chaoactividad("QA área de texto", "area_textos_medios")
     
@@ -196,6 +187,8 @@ def autoseleccion_grupos():
     
     display_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
     display_btn.click()
+    
+    editModeOff()
     
     screenshooter("autoseleccion_grupos", "Autoseleccion_grupos")
     
@@ -310,6 +303,8 @@ def carpeta():
     submit_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
     submit_btn.click()
     
+    editModeOff()
+    
     screenshooter("carpeta", "carpeta")
     
     chaoactividad(nombre_actividad, "carpeta")
@@ -326,6 +321,8 @@ def certificado():
     submit_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
     submit_btn.click()
     
+    editModeOff()
+    
     screenshooter("certificado", "certificado")
     
     chaoactividad(nombre_actividad, "certificado")
@@ -341,6 +338,8 @@ def chat():
     
     submit_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
     submit_btn.click()
+    
+    editModeOff()
     
     screenshooter("chat", "chat")
     
@@ -398,16 +397,20 @@ def consulta():
         matricular_btn.click()
         
         # Parte que podría llegar a cambiar
-        
         matricular_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
         matricular_btn.click()
         
         driver.refresh()
         
+        editModeOff()
+        
         screenshooter("consulta", "consulta")
 
     except :
         print("Ya estás matriculado")
+        
+        editModeOff()
+        
         screenshooter("consulta", "consulta")
         
     chaoactividad(nombre_actividad, "consulta")
@@ -769,7 +772,6 @@ def h5p():
     screenshooter("h5p", "h5p")
     
     chaoactividad(nombre_actividad, "h5p")
-    
 
 # Tenemos que hacerlo según el pdf de QA
 def H5P():
@@ -811,7 +813,8 @@ def H5P():
     ruta = "C:/Users/mrive/Documents/Trabajo/automatización QA/Git/autoQA/Olympic.jpg"
     add_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@class = "h5peditor-field-file-upload-text"]')))
     add_btn.send_keys(ruta)
-    
+   
+# QA de herramient externa 
 def herramienta_externa():
     
     btnactividades("lti")
@@ -835,10 +838,13 @@ def herramienta_externa():
     send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
     send_btn.click()
     
+    editModeOff()
+    
     screenshooter("herramienta_externa", "herramienta_externa")
     
     chaoactividad(nombre_actividad, "herramienta_externa")
     
+# QA de laboratorio
 def laboratorio():
     
     btnactividades("vpl")
@@ -852,10 +858,13 @@ def laboratorio():
     send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
     send_btn.click()
     
+    editModeOff()
+    
     screenshooter("laboratorio", "laboratorio")
     
     chaoactividad(nombre_actividad, "laboratorio")
       
+# QA de lección
 def leccion():
     
     btnactividades("lesson")
@@ -869,10 +878,13 @@ def leccion():
     send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
     send_btn.click()
     
+    editModeOff()
+    
     screenshooter("leccion", "leccion")
     
     chaoactividad(nombre_actividad, "leccion")
     
+# QA de libro
 def libro():
     
     btnactividades("book")
@@ -900,10 +912,13 @@ def libro():
     send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
     send_btn.click()
     
+    editModeOff()
+    
     screenshooter("libro", "libro")
     
     chaoactividad(nombre_actividad, "libro")
     
+# QA de página
 def pagina():
     
     btnactividades("page")
@@ -922,10 +937,13 @@ def pagina():
     send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
     send_btn.click()
     
+    editModeOff()
+    
     screenshooter("pagina", "pagina")
     
     chaoactividad(nombre_actividad, "pagina")
     
+# QA de paquete SCORM
 def scorm():
     
     btnactividades("scorm")
@@ -956,10 +974,13 @@ def scorm():
     btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[starts-with(@class, "btn btn-primary") and @type = "submit"]')))
     btn.click()
     
+    editModeOff()
+
     screenshooter("scorm", "scorm")
     
     chaoactividad(nombre_actividad, "scorm")
     
+# QA de póster
 def poster():
     from selenium.webdriver.support.ui import Select
     
@@ -984,6 +1005,7 @@ def poster():
     
     chaoactividad(nombre_actividad, "poster")
    
+# QA de taller
 def taller():
     
     btnactividades("workshop")
@@ -997,10 +1019,13 @@ def taller():
     send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
     send_btn.click()
     
+    editModeOff()
+    
     screenshooter("taller", "taller")
     
     chaoactividad(nombre_actividad, "taller")
        
+# QA de tarea
 def tarea():
     
     btnactividades("assign")
@@ -1014,10 +1039,13 @@ def tarea():
     send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
     send_btn.click()
     
+    editModeOff()
+    
     screenshooter("tarea", "tarea")
     
     chaoactividad(nombre_actividad, "tarea")
        
+# QA de wiki
 def wiki():
     
     btnactividades("wiki")
@@ -1049,10 +1077,84 @@ def wiki():
     send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'save')))
     send_btn.click()
     
+    editModeOff()
+    
     screenshooter("wiki", "wiki")
     
     chaoactividad(nombre_actividad, "wiki")
     
+# QA de url
+def url():
+    
+    btnactividades("url")
+    
+    # Ingresamos el nombre de la actividad y la url externa
+    nombre_actividad = "QA url"
+    input_nombre_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+    input_nombre_actividad.send_keys(nombre_actividad)
+    
+    url = "https://intranet.uai.cl/"
+    input_url = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_externalurl"]')))
+    input_url.send_keys(url)
+    
+    # Guardamos y mostramos
+    send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    send_btn.click()
+    
+    editModeOff()
+    
+    screenshooter("url", "url")
+    
+    chaoactividad(nombre_actividad, "url")
+
+# QA de urluai
+def urluai():
+    from selenium.webdriver.support.ui import Select
+    
+    btnactividades("urluai")
+    
+    # Ingresamos el nombre de la actividad y la url externa
+    nombre_actividad = "QA urluai"
+    input_nombre_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+    input_nombre_actividad.send_keys(nombre_actividad)
+    
+    url = "https://intranet.uai.cl/"
+    input_url = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_externalurl"]')))
+    input_url.send_keys(url)
+    
+    # Ponemos algunas variables en la URL
+    btn = wait.until(EC.element_to_be_clickable((By.ID, "id_parameterssection" )))
+    btn.click()
+    
+    # Primer parámetro
+    parametro = "Juan Carlos"
+    input_parametro = wait.until(EC.element_to_be_clickable((By.ID, 'id_parameter_0')))
+    input_parametro.send_keys(parametro)
+    
+    # Escojemos que tipo de variable sea
+    selector = Select(wait.until(EC.element_to_be_clickable((By.XPATH, '//select[@id="id_variable_0"]'))))
+    selector.select_by_value("urlname")
+    
+    time.sleep(1)
+    
+    # Segundo parámetro
+    parametro = "Español"
+    input_parametro = wait.until(EC.element_to_be_clickable((By.ID, 'id_parameter_1')))
+    input_parametro.send_keys(parametro)
+    
+    # Escojemos que tipo de variable sea
+    selector = Select(wait.until(EC.element_to_be_clickable((By.ID, 'id_variable_1'))))
+    selector.select_by_value("lang")
+    
+    # Guardamos y mostramos
+    send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    send_btn.click()
+    
+    editModeOff()
+    
+    screenshooter("urluai", "urluai")
+    
+    chaoactividad(nombre_actividad, "urluai")
     
 # Saca fotos de las páginas
 def screenshooter(carpeta,opcion):
@@ -1100,13 +1202,14 @@ def btnactividades(actividad):
       
 # Generalización para volver al curso
 def back_to_curso():
-    driver.get("http://localhost/course/view.php?id=2594#section-0")
-    editMode()
-    
+    driver.get("http://localhost/course/view.php?id=2602")
+
+# Función que nos permite sacar fotos de como se ve la actividad en la página principal del curso y luego eliminar esta actividad
 def chaoactividad(nombre,carpeta):
     back_to_curso()
     
     if not carpeta == None:
+        editModeOff()
         screenshooter(carpeta, "display")   
     
     editMode()
@@ -1120,23 +1223,6 @@ def chaoactividad(nombre,carpeta):
     
     yes_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@type="button" and @class="btn btn-primary"]')))
     yes_btn.click()
-    
-    
-# def actividades_recursos():
-    # editMode()
-    
-    # df = []
-    # # time.sleep(5)
-    # wait = WebDriverWait(driver, 10)
-    
-    # add = wait.until(EC.element_to_be_clickable((By.XPATH, "//button[@data-action = 'open-chooser']")))
-    # add.click()
-    
-    # actividades = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@role = 'menubar']")))
-    
-    # for actividad in actividades:
-    #     valor = actividad.get_attribute("arial-label")
-    #     print(valor)
     
 def prueba():
     formatQA()
@@ -1153,7 +1239,7 @@ def prueba():
     encuestapredefinida()
     glosario()
     h5p()
-    herramientea_externa()
+    herramienta_externa()
     laboratorio()   
     leccion()
     libro()
@@ -1163,96 +1249,12 @@ def prueba():
     taller()
     tarea()
     wiki()
+    url()
+    urluai()
     
     
 login()
-# prueba()
-
-# Listo
-# formatQA()
-
-# Listo
-# archivo()
-
-# Listo
-# area_textos_medios()
-
-# Listo 
-# autoseleccion_grupos()
-
-# Listo
-# base_de_datos()
-
-# Listo
-# certificado()
-
-# Listo
-# chat()
-
-# Listo
-# consulta()
-
-# Listo
-# cuestionario()
-
-# Listo
-# cuestionarioofline()
-
-# Listo
-# encuesta()
-
-# Listo
-# encuesta2()
-
-# Listo
-# encuestapredefinida()
-
-# Listo
-# glosario()
-
-# Listo
-# h5p()
-
-# Problemas con este
-# H5P()
-
-# Listo
-# herramienta_externa()
-
-# Listo
-# laboratorio()
-
-# Listo
-# libro()
-
-# Listo 
-# pagina()
-
-# Listo
-# scorm()
-
-# Listo
-# poster()
-
-# Listo
-# taller()
-
-# Listo
-# tarea()
-
-# Listo
-# wiki()
-
-# editMode()
-# editModeOff()
-
-# for i in range(0, 1):
-#     chaoactividad("QA encuesta predefinida", None)
-
-
-
-
-
+prueba()
 
 time.sleep(5)
 driver.quit()
