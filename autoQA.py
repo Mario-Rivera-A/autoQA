@@ -800,19 +800,26 @@ def H5P():
     type_content = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[contains(@href, "ImageHotspots")]')))
     type_content.click()
     
+    # Tenemos que cambiar al iframe de h5p
+    
+    driver.switch_to.frame("h5p-editor")
+    
     # Ingresamos el título del contenido
     time.sleep(3)
     titulo = "QA H5P"
     
     ## Acá hay problemas ##
-    input_titulo = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id = "field-extratitle--1" and @type = "text" and @aria-describedby = "field-extratitle--1-description"]')))
+    input_titulo = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@class = "h5peditor-text"]')))
     input_titulo.send_keys(titulo)
     
     ## Intentamos ingresar el archivo ##
     # Ruta de la imagen 
     ruta = "C:/Users/mrive/Documents/Trabajo/automatización QA/Git/autoQA/Olympic.jpg"
-    add_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@class = "h5peditor-field-file-upload-text"]')))
+    add_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@href = "#" and @class = "add"]')))
+    # add_btn.click()
     add_btn.send_keys(ruta)
+    
+    
    
 # QA de herramient externa 
 def herramienta_externa():
