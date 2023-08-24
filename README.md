@@ -1,19 +1,11 @@
 # autoQA
 
+This repository contains the automated testing suite for Webcursos. This QA environment was developed against Moodle 4.1 and RemUI
 
-NOTE
-----
-El QA se tiene que hacer en un curso nuevo y con la página en español (RESTRICTIVO)
+## How to use:
 
-Ojo al momento de correr el código con un debuger ya que la función consulta() tiene un try/except (que matricula al usuario en el curso si es que este no llega a estar matriculado) que puede arrojar problemas, esta función también tarda más de lo normal
-
-En las funciones login() y en back_to_curso() hay que cambiar el URL del curso en el que se van a hacer las pruebas
-
-
-Hay que configurar la ruta correcta de los archivos en las siguientes funciones:
-
-- archivo()
-- carpeta()
-- h5p()
-- scorm()
-- screenshooter()
+1. Copy the `env.py-dist` file to `env.py` and populate the fields
+2. Setup a python environment (`python3 -m venv venv`)
+3. Load the environment (`source venv/bin/activate`)
+4. Install requirements (`pip install -r requirements`)
+5. Run (`python autoQA.py`)
