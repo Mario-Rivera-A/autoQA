@@ -8,7 +8,7 @@ import time
 
 import pandas as pd
 
-from credenciales import USER, PASS
+from credenciales import USER2, PASS2
 
 import os
 
@@ -16,6 +16,9 @@ driver = webdriver.Chrome()
 wait = WebDriverWait(driver, 10)
 
 # Información global
+
+directorio = "C:/Users/mrive/Documents/Trabajo/automatización QA/Git/"
+
 preguntas = list([["Animales Nacionales", "¿Qué animal es el símbolo nacional de Chile?", "Cóndor", "Puma", "Huemul", "Flamenco", 2],
                         ["Mayor Población", "¿Qué país tiene la mayor población del mundo?", "India", "EE.UU", "China", "Brasil", 2],
                         ["Instrumentos", "¿Qué instrumento musical tiene teclas blancas y negras?", "Violín", "Guitarra", "Piano", "Flauta", 2],
@@ -27,17 +30,30 @@ preguntas = list([["Animales Nacionales", "¿Qué animal es el símbolo nacional
 ##Función para hacer el login en el curso QA
 def login():
 
-    driver.get("http://localhost/course/view.php?id=1550#section-0")
+    driver.get("https://moodlecloud.uai.cl/course/view.php?id=10606")
     driver.maximize_window()
 
     title = driver.title
+    print(title)
 
-    #ingresar los datos de usuario
-    driver.find_element(By.ID,"username").send_keys(USER)
-    driver.find_element(By.ID,"password").send_keys(PASS)
+    # Ingreso a moodlecloud
+    accesbtn = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@title="Microsoft"]'))).click()
+
+    # #ingresar los datos de usuario
+    wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="email"]'))).send_keys(USER2)
+    wait.until(EC.element_to_be_clickable((By.XPATH,'//input[@type="submit"]'))).click()
+    wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="password"]'))).send_keys(PASS2)
+    wait.until(EC.element_to_be_clickable((By.XPATH,'//input[@type="submit"]'))).click()
+    
+    time.sleep(20)
+    
+    wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="submit"]'))).click()
+    
+    # driver.find_element(By.ID,"password").send_keys(PASS)
+    # driver.find_element(By.ID,"password").send_keys(PASS)
 
     #hacer click en el botón acceder
-    driver.find_element(By.ID,"loginbtn").click()
+    # driver.find_element(By.ID,"loginbtn").click()
 
 #seleccionar el modo de edición si este está desactivado
 def editMode():
@@ -76,12 +92,15 @@ def editModeOff():
 #QA de formatos de curso
 def formatQA():
     from selenium.webdriver.support.ui import Select
+    time.sleep(2)
         
     wait = WebDriverWait(driver, 10)
-    configbtn = wait.until(EC.visibility_of_element_located((By.XPATH, '//li[@data-key="editsettings" and @title="Configuración"]')))
+    configbtn = wait.until(EC.visibility_of_element_located((By.XPATH, '//ul[@role="menubar"]/li[@data-key="editsettings"]')))
     configbtn.click()
     formatbtn = wait.until(EC.visibility_of_element_located((By.ID, 'id_courseformathdr')))
     formatbtn.click()
+    driver.execute_script("window.scrollTo(0, "+str(250)+");")
+    time.sleep(1)
     menuopciones = wait.until(EC.visibility_of_element_located((By.ID, 'id_format')))
     menuopciones.click()
     
@@ -114,12 +133,12 @@ def formatQA():
             btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//li[@data-key="course"]')))
             btn.click()
             
-            configbtn = wait.until(EC.element_to_be_clickable((By.XPATH,  '//a[text()="Configuración"]')))
+            configbtn = wait.until(EC.element_to_be_clickable((By.XPATH,  '//div[@class="dropdown-menu show"]/a[1]')))
             configbtn.click()
 
         else:
             
-            configbtn = wait.until(EC.element_to_be_clickable((By.XPATH, '//li[@data-key="editsettings" and @title="Configuración"]')))
+            configbtn = wait.until(EC.element_to_be_clickable((By.XPATH, '//ul[@role="menubar"]/li[@data-key="editsettings"]')))
             configbtn.click()
         
         formatbtn = wait.until(EC.element_to_be_clickable((By.ID, 'id_courseformathdr')))
@@ -137,9 +156,9 @@ def formatQA():
     
     back_to_curso()
 
-# Listo
-def archivo():
-    directorio_archivo = "C:/Users/mrive/Documents/Trabajo/automatización QA/Git/autoQA/Dummy PDF.pdf"
+# QA de archivo
+def archivo(directorio):
+    # directorio_archivo = directorio+"/autoQA/Dummy PDF.pdf"
     
     wait = WebDriverWait(driver, 10)
     
@@ -149,13 +168,17 @@ def archivo():
     nombre_archivo = "QA archivo"
     driver.find_element(By.ID,"id_name").send_keys(nombre_archivo)
     
+    driver.execute_script("window.scrollTo(0, "+str(250)+");")
+    
+    time.sleep(1)
+    
     #subir archivo desde el filepicker
     
     agregar_archivo = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[starts-with(@class,"fp-btn-add")]')))
     agregar_archivo.click()
     
     input_archivo = wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@type="file"]')))
-    input_archivo.send_keys(directorio_archivo)
+    input_archivo.send_keys(directorio+"/autoQA/Dummy PDF.pdf")
     
     uploadfile = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@class="fp-upload-btn btn-primary btn"]')))
     uploadfile.click()
@@ -165,7 +188,7 @@ def archivo():
     
     screenshooter("archivo", "Archivo_subido")
     
-    chaoactividad(nombre_archivo, "archivo")
+    chaoactividad(nombre_archivo)
     
 # QA de area de textos y medios
 def area_textos_medios():
@@ -180,7 +203,7 @@ def area_textos_medios():
     
     # screenshooter("area_textos_medios", "Area_de_textos_y_medios")
     
-    chaoactividad("QA área de texto", "area_textos_medios")
+    chaoactividad("QA área de texto")
     
 # QA de autoselección de grupos
 def autoseleccion_grupos():
@@ -232,7 +255,7 @@ def autoseleccion_grupos():
     
     screenshooter("autoseleccion_grupos", "Autoseleccion_grupos3")
     
-    chaoactividad(titulo_actividad, "autoseleccion_grupos")
+    chaoactividad(titulo_actividad)
     
 # QA de base de datos
 def base_de_datos():
@@ -287,7 +310,7 @@ def base_de_datos():
     
     screenshooter("base_de_datos", "registro")
     
-    chaoactividad(nombre_actividad, "base_de_datos")
+    chaoactividad(nombre_actividad)
  
 # QA de carpeta   
 def carpeta():
@@ -298,13 +321,11 @@ def carpeta():
     input_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
     input_actividad.send_keys(nombre_actividad)
     
-    directorio_archivo = "C:/Users/mrive/Documents/Trabajo/automatización QA/Git/autoQA/Dummy PDF.pdf"
-    
     agregar_archivo = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[starts-with(@class,"fp-btn-add")]')))
     agregar_archivo.click()
     
     input_archivo = wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@type="file"]')))
-    input_archivo.send_keys(directorio_archivo)
+    input_archivo.send_keys(directorio+"/autoQA/Dummy PDF.pdf")
     
     uploadfile = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@class="fp-upload-btn btn-primary btn"]')))
     uploadfile.click()
@@ -316,7 +337,7 @@ def carpeta():
     
     screenshooter("carpeta", "carpeta")
     
-    chaoactividad(nombre_actividad, "carpeta")
+    chaoactividad(nombre_actividad)
     
 # QA de certificado
 def certificado():
@@ -334,7 +355,7 @@ def certificado():
     
     screenshooter("certificado", "certificado")
     
-    chaoactividad(nombre_actividad, "certificado")
+    chaoactividad(nombre_actividad)
       
 # QA de chat
 def chat():
@@ -380,7 +401,7 @@ def chat():
     #Cerramos ventana de chat
     driver.close()
     driver.switch_to.window(ventana_original)
-    chaoactividad(nombre_actividad, "chat")
+    chaoactividad(nombre_actividad)
     
     print("ya estamos en la nueva ventana")
    
@@ -422,7 +443,7 @@ def consulta():
         
         screenshooter("consulta", "consulta")
         
-    chaoactividad(nombre_actividad, "consulta")
+    chaoactividad(nombre_actividad)
     
 # QA cuestionario
 def cuestionario():
@@ -549,7 +570,7 @@ def cuestionario():
     
     screenshooter("cuestionario", "revisión")
     
-    chaoactividad(nombre_actividad, "cuestionario")
+    chaoactividad(nombre_actividad)
     
 # QA de cuestionario offline
 def cuestionarioofline():
@@ -566,7 +587,7 @@ def cuestionarioofline():
     
     screenshooter("cuestionarioofline", "cuestionarioofline")
     
-    chaoactividad(nombre_actividad, "cuestionarioofline")
+    chaoactividad(nombre_actividad)
     
 # QA de encuesta
 def encuesta():
@@ -583,6 +604,7 @@ def encuesta():
     send_btn.click()
     
     # Editar preguntas
+    
     edit_btn = driver.find_elements(By.XPATH, '//a[@class="btn btn-secondary"]')
     edit_btn[0].click()
     
@@ -625,7 +647,7 @@ def encuesta():
     
     screenshooter("encuesta", "encuesta_respondida")
     
-    chaoactividad(nombre_actividad, "encuesta")
+    chaoactividad(nombre_actividad)
    
 # QA de encuesta questionnaire 
 def encuesta2():
@@ -692,7 +714,7 @@ def encuesta2():
     
     screenshooter("questionnaire", "resultados")
     
-    chaoactividad(nombre_actividad, "questionnaire")
+    chaoactividad(nombre_actividad)
     
 # QA de encuesta predefinida
 def encuestapredefinida():
@@ -713,7 +735,7 @@ def encuestapredefinida():
     send_btn.click()
     
     screenshooter("encuestapredefinida", "encuestapredefinida")
-    chaoactividad(nombre_actividad, "encuestapredefinida")
+    chaoactividad(nombre_actividad)
     
 # QA de glosario 
 def glosario():
@@ -750,7 +772,7 @@ def glosario():
     
     screenshooter("glosario", "glosario")
     
-    chaoactividad(nombre_actividad, "glosario")
+    chaoactividad(nombre_actividad)
     
 # QA de H5P (Suerte en esto)
 def h5p():
@@ -762,15 +784,13 @@ def h5p():
     input_nombre_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
     input_nombre_actividad.send_keys(nombre_actividad)
     
-    # Tenemos que subir el paquete de archivos h5p
-    directorio_archivo = "C:/Users/mrive/Documents/Trabajo/automatización QA/Git/autoQA/H5P.h5p"
-    
     # Vamos al filepicker y subimos el archivo
     agregar_archivo = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[starts-with(@class,"fp-btn-add")]')))
     agregar_archivo.click()
     
+    # Mandamos el archivo h5p
     input_archivo = wait.until(EC.visibility_of_element_located((By.XPATH, '//input[@type="file"]')))
-    input_archivo.send_keys(directorio_archivo)
+    input_archivo.send_keys(directorio+"/autoQA/H5P.h5p")
     
     uploadfile = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@class="fp-upload-btn btn-primary btn"]')))
     uploadfile.click()
@@ -780,55 +800,7 @@ def h5p():
     
     screenshooter("h5p", "h5p")
     
-    chaoactividad(nombre_actividad, "h5p")
-
-# Tenemos que hacerlo según el pdf de QA
-def H5P():
-    
-    btnactividades("h5pactivity")
-    
-    ventana_inicial = driver.current_window_handle
-    
-    # Accedemos al banco de contenido
-    banco_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@class = "form-control-static"]/a[@target="_blank"]')))
-    banco_btn.click()
-    
-    # Vamos a cambiarnos a la nueva pestaña para trabajar en ella
-    
-    ventanas_nuevas = driver.window_handles
-    
-    for ventana in ventanas_nuevas:
-        if ventana != ventana_inicial:
-            driver.switch_to.window(ventana)
-            break
-        
-    # Tenemos que escoger el tipo de contenido (Image Hotspot en este caso)
-    add_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@type = "button" and @data-toggle = "dropdown"]')))
-    add_btn.click()
-    
-    type_content = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[contains(@href, "ImageHotspots")]')))
-    type_content.click()
-    
-    # Tenemos que cambiar al iframe de h5p
-    
-    driver.switch_to.frame("h5p-editor")
-    
-    # Ingresamos el título del contenido
-    time.sleep(3)
-    titulo = "QA H5P"
-    
-    ## Acá hay problemas ##
-    input_titulo = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@class = "h5peditor-text"]')))
-    input_titulo.send_keys(titulo)
-    
-    ## Intentamos ingresar el archivo ##
-    # Ruta de la imagen 
-    ruta = "C:/Users/mrive/Documents/Trabajo/automatización QA/Git/autoQA/Olympic.jpg"
-    add_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@href = "#" and @class = "add"]')))
-    # add_btn.click()
-    add_btn.send_keys(ruta)
-    
-    
+    chaoactividad(nombre_actividad)
    
 # QA de herramient externa 
 def herramienta_externa():
@@ -858,7 +830,7 @@ def herramienta_externa():
     
     screenshooter("herramienta_externa", "herramienta_externa")
     
-    chaoactividad(nombre_actividad, "herramienta_externa")
+    chaoactividad(nombre_actividad)
     
 # QA de laboratorio
 def laboratorio():
@@ -878,7 +850,7 @@ def laboratorio():
     
     screenshooter("laboratorio", "laboratorio")
     
-    chaoactividad(nombre_actividad, "laboratorio")
+    chaoactividad(nombre_actividad)
       
 # QA de lección
 def leccion():
@@ -898,7 +870,7 @@ def leccion():
     
     screenshooter("leccion", "leccion")
     
-    chaoactividad(nombre_actividad, "leccion")
+    chaoactividad(nombre_actividad)
     
 # QA de libro
 def libro():
@@ -932,7 +904,7 @@ def libro():
     
     screenshooter("libro", "libro")
     
-    chaoactividad(nombre_actividad, "libro")
+    chaoactividad(nombre_actividad)
     
 # QA de página
 def pagina():
@@ -957,7 +929,7 @@ def pagina():
     
     screenshooter("pagina", "pagina")
     
-    chaoactividad(nombre_actividad, "pagina")
+    chaoactividad(nombre_actividad)
     
 # QA de paquete SCORM
 def scorm():
@@ -974,9 +946,8 @@ def scorm():
     agregar_archivo = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[starts-with(@class,"fp-btn-add")]')))
     agregar_archivo.click()
     
-    ruta = "C:/Users/mrive/Documents/Trabajo/automatización QA/Git/autoQA/scorm.zip"
     add_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type = "file"]')))
-    add_btn.send_keys(ruta)
+    add_btn.send_keys(directorio+"/autoQA/scorm.zip")
     
     # Subimos el archivo
     send_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@class="fp-upload-btn btn-primary btn"]')))
@@ -994,7 +965,7 @@ def scorm():
 
     screenshooter("scorm", "scorm")
     
-    chaoactividad(nombre_actividad, "scorm")
+    chaoactividad(nombre_actividad)
     
 # QA de póster
 def poster():
@@ -1019,7 +990,7 @@ def poster():
     
     screenshooter("poster", "poster")
     
-    chaoactividad(nombre_actividad, "poster")
+    chaoactividad(nombre_actividad)
    
 # QA de taller
 def taller():
@@ -1039,7 +1010,7 @@ def taller():
     
     screenshooter("taller", "taller")
     
-    chaoactividad(nombre_actividad, "taller")
+    chaoactividad(nombre_actividad)
        
 # QA de tarea
 def tarea():
@@ -1059,7 +1030,7 @@ def tarea():
     
     screenshooter("tarea", "tarea")
     
-    chaoactividad(nombre_actividad, "tarea")
+    chaoactividad(nombre_actividad)
        
 # QA de wiki
 def wiki():
@@ -1097,7 +1068,7 @@ def wiki():
     
     screenshooter("wiki", "wiki")
     
-    chaoactividad(nombre_actividad, "wiki")
+    chaoactividad(nombre_actividad)
     
 # QA de url
 def url():
@@ -1121,7 +1092,7 @@ def url():
     
     screenshooter("url", "url")
     
-    chaoactividad(nombre_actividad, "url")
+    chaoactividad(nombre_actividad)
 
 # QA de urluai
 def urluai():
@@ -1170,8 +1141,9 @@ def urluai():
     
     screenshooter("urluai", "urluai")
     
-    chaoactividad(nombre_actividad, "urluai")
+    chaoactividad(nombre_actividad)
     
+# QA de página de contenido
 def pagina_contenido():
     btnactividades("icontent")
     
@@ -1200,12 +1172,13 @@ def pagina_contenido():
     
     screenshooter("pagina_contenido", "pagina_contenido")
     
-    chaoactividad(nombre_actividad, "urluai")
+    chaoactividad(nombre_actividad)
     
+# Creación de preguntas para realizar los juegos
 def inicio_juegos(preguntas):
     from selenium.webdriver.support.ui import Select
     
-    #La idea es crear las preguntas necesarias para que los juegos puedan ser testeados
+    # Se reciben las preguntas de una lista que está en el inicio del código
 
     # Extraemos el link del banco de preguntas
     banco_preguntas = wait.until(EC.invisibility_of_element_located((By.XPATH, '//li[@data-key="questionbank"]/a[@role="menuitem"]')))
@@ -1214,15 +1187,6 @@ def inicio_juegos(preguntas):
     # Luego redireccionamos a ese link
     driver.get(href)
     
-    # Creamos las preguntas necesarias
-    # Preguntas
-    # preguntas = list([["Animales Nacionales", "¿Qué animal es el símbolo nacional de Chile?", "Cóndor", "Puma", "Huemul", "Flamenco", 2],
-    #                     ["Mayor Población", "¿Qué país tiene la mayor población del mundo?", "India", "EE.UU", "China", "Brasil", 2],
-    #                     ["Instrumentos", "¿Qué instrumento musical tiene teclas blancas y negras?", "Violín", "Guitarra", "Piano", "Flauta", 2],
-    #                     ["Planetas", "¿Qué planeta es el cuarto más cercano al sol?", "Mercurio", "Saturno", "Tierra", "Marte", 3],
-    #                     ["Animales", "¿Qué animal tiene alas, plumas y puede volar?", "Elefante", "Pato", "Jirafa", 1],
-    #                     ["Continentes", "¿Qué continente tiene el mayor número de países?", "Asia", "Africa", "Europa", 1],
-    #                     ["Planetas 2", "¿Qué planeta es el más pequeño del sistema solar?", "Tierra", "Marte", "Mercurio", 2]])
     
     for i in range(0,4):
         newquest = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@class="btn btn-secondary"]')))
@@ -1315,6 +1279,7 @@ def inicio_juegos(preguntas):
     
     back_to_curso()
     
+# QA de ahorcado
 def ahorcado(preguntas):
     from selenium.webdriver.support.ui import Select
     import unidecode
@@ -1326,26 +1291,24 @@ def ahorcado(preguntas):
     input_nombre_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
     input_nombre_actividad.clear()
     input_nombre_actividad.send_keys(nombre_actividad)
-    # # Seleccionamos la fuente de preguntas
-    # fuente_preguntas = wait.until(EC.element_to_be_clickable((By.XPATH, '//select[@id="id_sourcemodule" ]')))
-    # selector = Select(fuente_preguntas)
-    # selector.select_by_value("question")
-    # Seleccionamos el banco de preguntas
     banco_preguntas = wait.until(EC.element_to_be_clickable((By.XPATH, '//select[@id="id_questioncategoryid"]')))
     selector = Select(banco_preguntas)
     selector.select_by_index(1)
+    
     # Guardamos y mostramos
     send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
     send_btn.click()
-    
     editModeOff()
     screenshooter("ahorcado", "ahorcado_previo")
+    
     # Jugamos
     playbtn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@class="btn btn-secondary"]')))
     playbtn.click()
     screenshooter("ahorcado", "ahorcado_jugando")
+    
     # Buscamos cual es la respuesta de la pregunta que salió
     enunciado = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@role="main"]/b')))
+    
     # enunnciado = enunciado.get_attribute("innerHTML")
     print(enunciado.text)
     for i in range(4,len(preguntas)):
@@ -1353,11 +1316,13 @@ def ahorcado(preguntas):
             indice_respuesta = preguntas[i][5]
             respuesta = preguntas[i][indice_respuesta+2]
             print(f"La respuesta es {respuesta}")
+    
     # Primero formateamos las letras de la respuesta
     respuesta = unidecode.unidecode(respuesta)
     respuesta = respuesta.upper()
     respuesta = list(set(respuesta))
     print(respuesta)
+    
     # Tenemos que seleccionar las letras de la respuesta
     for i in range(0,len(respuesta)):
         letra = respuesta[i]
@@ -1365,12 +1330,12 @@ def ahorcado(preguntas):
         btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//font/a[contains(text(), "'+letra.upper()+'")]')))
         btn.click()
     screenshooter("ahorcado", "ahorcado_resuelto")
-    chaoactividad(nombre_actividad, "ahorcado")
+    chaoactividad(nombre_actividad)
     
+# QA de criptograma
 def criptograma(preguntas):
     from selenium.webdriver.support.ui import Select
-    
-    
+     
     btnactividades("Criptograma")
     
     # Ingresamos el nombre del juego
@@ -1378,23 +1343,24 @@ def criptograma(preguntas):
     input_nombre_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
     input_nombre_actividad.clear()
     input_nombre_actividad.send_keys(nombre_actividad)
+    
     # Seleccionamos el banco de preguntas
     banco_preguntas = wait.until(EC.element_to_be_clickable((By.XPATH, '//select[@id="id_questioncategoryid"]')))
     selector = Select(banco_preguntas)
     selector.select_by_index(1)
+    
     # Guardamos y mostramos
     send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
     send_btn.click()
-    
     editModeOff()
     screenshooter("criptograma", "criptograma_previo")
+    
     # Jugamos
     playbtn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@class="btn btn-secondary"]')))
     playbtn.click()
     screenshooter("criptograma", "criptograma_jugando")
     
-    # Sabemos que son 3 preguntas para este juego
-    
+    # Sabemos que son 3 preguntas para este juego  
     for i in range(4,len(preguntas)):
         # Click en el botón respuesta
         respuesta_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="submit" and @value="Respuesta"]')))
@@ -1419,8 +1385,9 @@ def criptograma(preguntas):
         send_btn.click()
     screenshooter("criptograma", "criptograma_resuelto")
     
-    chaoactividad(nombre_actividad, "criptograma")
+    chaoactividad(nombre_actividad)
         
+# QA de crucigrama
 def crucigrama(preguntas): # Complicado pero no imposible, queda pendiente
     from selenium.webdriver.support.ui import Select
     
@@ -1431,21 +1398,70 @@ def crucigrama(preguntas): # Complicado pero no imposible, queda pendiente
     input_nombre_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
     input_nombre_actividad.clear()
     input_nombre_actividad.send_keys(nombre_actividad)
+    
     # Seleccionamos el banco de preguntas
     banco_preguntas = wait.until(EC.element_to_be_clickable((By.XPATH, '//select[@id="id_questioncategoryid"]')))
     selector = Select(banco_preguntas)
     selector.select_by_index(1)
+    
     # Guardamos y mostramos
     send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
     send_btn.click()
-    
     editModeOff()
     screenshooter("crucigrama", "crucigrama_previo")
+    
     # Jugamos
     playbtn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@class="btn btn-secondary"]')))
     playbtn.click()
     screenshooter("crucigrama", "crucigrama_jugando")
-
+    
+    
+    # Contamos la cantidad de filas y columnas que hay con Javascript
+    cantidad_filas = driver.execute_script("return CrosswordHeight;")
+    cantidad_columnas = driver.execute_script("return CrosswordWidth;")
+    print(f"Cantidad de filas: {cantidad_filas}")
+    print(f"Cantidad de columnas: {cantidad_columnas}")
+    
+    for i in range(1, cantidad_columnas+1):
+        for j in range(1,cantidad_filas+1):
+            # Seleccionamos la primera casilla disponible de la primera fila 
+            if(i == 2 and j == 1):
+                screenshooter("crucigrama", "crucigrama_jugando")
+                    
+            casilla = wait.until(EC.element_to_be_clickable((By.XPATH, '//table[@id="crossword"]/tbody/tr['+str(j+1)+']/td['+str(i+1)+']')))
+            if(casilla.get_attribute("id")):
+                print("La casilla existe")
+            else: 
+                print("La casilla no existe")
+                continue
+            casilla.click()
+            # Revisamos si es que la casilla ya está rellena según su valor
+            if(casilla.text):
+                print("La casilla ya está rellena")
+                continue
+            else:
+                print("La casilla está vacía")
+            
+            enunciado = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="answerbox"]/div[@id="wordclue"]')))
+            print(f"Enunciado: {enunciado.text}")
+                
+            # Busca la respuesta a la pregunta que está en pantalla
+            for i in range(4,len(preguntas)):
+                if(preguntas[i][1] == enunciado.text):
+                    indice_respuesta = preguntas[i][5]
+                    respuesta = preguntas[i][indice_respuesta+2]
+                    print(f"La respuesta es {respuesta}")
+                
+            # Ingresamos la respuesta
+            input_respuesta = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="wordentry"]')))
+            input_respuesta.send_keys(respuesta)
+            send_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@id="okbutton" and @class="button"]')))
+            send_btn.click()
+    screenshooter("crucigrama", "crucigrama_resuelto")        
+    
+    chaoactividad(nombre_actividad)
+    
+# QA de millonario
 def millonario(preguntas):
     from selenium.webdriver.support.ui import Select
     
@@ -1456,16 +1472,18 @@ def millonario(preguntas):
     input_nombre_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
     input_nombre_actividad.clear()
     input_nombre_actividad.send_keys(nombre_actividad)
+    
     # Seleccionamos el banco de preguntas
     banco_preguntas = wait.until(EC.element_to_be_clickable((By.XPATH, '//select[@id="id_questioncategoryid"]')))
     selector = Select(banco_preguntas)
     selector.select_by_index(1)
+    
     # Guardamos y mostramos
     send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
     send_btn.click()
-    
     editModeOff()
     screenshooter("millonario", "millonario_previo")
+    
     # Jugamos
     playbtn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@class="btn btn-secondary"]')))
     playbtn.click()
@@ -1487,21 +1505,17 @@ def millonario(preguntas):
     
     screenshooter("millonario", "millonario_resuelto")
     
-    chaoactividad(nombre_actividad, "millonario")
+    chaoactividad(nombre_actividad)
 
 # Saca fotos de las páginas
 def screenshooter(carpeta,opcion):
     ##Sacar screenshots de las páginas##
 
     altura_total = driver.execute_script("return document.body.scrollHeight")
-    
     print(altura_total)
-    
     altura_desplazamiento = 500
-    
     posicion_desplazamiento = 0
-    
-    directorio_capturas = "C:/Users/mrive/Documents/Trabajo/automatización QA/Git/"+carpeta
+    directorio_capturas = directorio+"/"+carpeta
     
     if not os.path.exists(directorio_capturas):
         # Crear el directorio
@@ -1519,8 +1533,7 @@ def screenshooter(carpeta,opcion):
             driver.save_screenshot(directorio_capturas+"/screenshot_"+opcion+"_"+str(posicion_desplazamiento)+".png")
     else: 
         driver.save_screenshot(directorio_capturas+"/screenshot_"+opcion+"_"+str(posicion_desplazamiento)+".png")
-        
-            
+                 
     driver.execute_script("window.scrollTo(0, 0);")    
     
 # Generalización para acceder a las actividades y recursos
@@ -1541,15 +1554,11 @@ def btnactividades(actividad):
       
 # Generalización para volver al curso
 def back_to_curso():
-    driver.get("http://localhost/course/view.php?id=1550#section-0")
+    driver.get("https://moodlecloud.uai.cl/course/view.php?id=10606")
 
 # Función que nos permite sacar fotos de como se ve la actividad en la página principal del curso y luego eliminar esta actividad
-def chaoactividad(nombre,carpeta,existencia = True):
+def chaoactividad(nombre):
     back_to_curso()
-    
-    # if not carpeta == None:
-    #     editModeOff()
-    #     screenshooter(carpeta, "display")   
     
     editMode()
     print(nombre)
@@ -1561,52 +1570,40 @@ def chaoactividad(nombre,carpeta,existencia = True):
     
     yes_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@type="button" and @class="btn btn-primary"]')))
     yes_btn.click()
-    
+
 login()
-# prueba()
-
-# formatQA()
-# archivo()
-# area_textos_medios()
-# autoseleccion_grupos()
-# base_de_datos()
-# certificado()
-# chat()
-# consulta()
-# cuestionario()
-# encuesta()
-# encuesta2()
+formatQA()
+archivo(directorio)
+area_textos_medios()
+autoseleccion_grupos()
+base_de_datos()
+certificado()
+chat()
+consulta()
+encuesta()
+encuesta2()
 # # encuestapredefinida() #Esta encuesta ya no está dentro de los recursos disponibles
-# glosario()
-# h5p()
-# herramienta_externa()
-# laboratorio()   
-# leccion()
-# libro()
-# pagina()
-# scorm()
+glosario()
+h5p()
+herramienta_externa()
+laboratorio()   
+leccion()
+libro()
+pagina()
+scorm()
 # poster() #No se por que, pero genera un 502 Bad Gateway
-# taller()
-# tarea()
-# wiki()
-# url()
-# urluai()
-# pagina_contenido()
-# inicio_juegos(preguntas)
-# ahorcado(preguntas)
-# criptograma(preguntas)
-# crucigrama(preguntas)
+taller()
+tarea()
+wiki()
+url()
+urluai()
+pagina_contenido()
+inicio_juegos(preguntas)
+ahorcado(preguntas)
+criptograma(preguntas)
+crucigrama(preguntas) 
 millonario(preguntas)
-
-
-
-    
-
-
-
-
-
-
+cuestionario()
 
 time.sleep(5)
 driver.quit()
