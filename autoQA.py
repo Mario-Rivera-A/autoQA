@@ -224,7 +224,7 @@ def autoseleccion_grupos():
     
     screenshooter("autoseleccion_grupos", "Autoseleccion_grupos")
     
-    administrar_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[text()="Administrar grupos"]')))
+    administrar_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@role="main"]/div[2]')))
     administrar_btn.click()
     
     # Crear grupos automáticamente
@@ -475,7 +475,7 @@ def cuestionario():
     agregar_pregunta.click()
     
     #Agregamos una pregunta de opción múltiple
-    agregar_pregunta = wait.until(EC.element_to_be_clickable((By.XPATH, '//span[@class="typename" and text()="Opción múltiple"]')))
+    agregar_pregunta = wait.until(EC.element_to_be_clickable((By.XPATH, '//fieldset/div[1]/label')))
     agregar_pregunta.click()
     
     send_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="submit" and @name="submitbutton"]')))
@@ -519,7 +519,7 @@ def cuestionario():
     agregar_pregunta = wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@data-action="addquestion"]')))
     agregar_pregunta.click()
     
-    agregar_pregunta = wait.until(EC.element_to_be_clickable((By.XPATH, '//span[@class="typename" and text()="Verdadero/Falso"]')))
+    agregar_pregunta = wait.until(EC.element_to_be_clickable((By.XPATH, '//fieldset/div[2]/label')))
     agregar_pregunta.click()
     
     send_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="submit" and @name="submitbutton"]')))
@@ -1308,8 +1308,6 @@ def ahorcado(preguntas):
     
     # Buscamos cual es la respuesta de la pregunta que salió
     enunciado = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@role="main"]/b')))
-    
-    # enunnciado = enunciado.get_attribute("innerHTML")
     print(enunciado.text)
     for i in range(4,len(preguntas)):
         if(preguntas[i][1] == enunciado.text):
@@ -1363,7 +1361,7 @@ def criptograma(preguntas):
     # Sabemos que son 3 preguntas para este juego  
     for i in range(4,len(preguntas)):
         # Click en el botón respuesta
-        respuesta_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="submit" and @value="Respuesta"]')))
+        respuesta_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="submit"]')))
         respuesta_btn.click()
         
         enunciado = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="answerbox"]/div[@id="wordclue"]')))
@@ -1582,7 +1580,7 @@ chat()
 consulta()
 encuesta()
 encuesta2()
-# # encuestapredefinida() #Esta encuesta ya no está dentro de los recursos disponibles
+# encuestapredefinida() #Esta encuesta ya no está dentro de los recursos disponibles
 glosario()
 h5p()
 herramienta_externa()
@@ -1591,7 +1589,7 @@ leccion()
 libro()
 pagina()
 scorm()
-# poster() #No se por que, pero genera un 502 Bad Gateway
+poster() 
 taller()
 tarea()
 wiki()
