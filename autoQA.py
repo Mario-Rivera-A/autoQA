@@ -13,6 +13,17 @@ import os
 driver = webdriver.Chrome()
 wait = WebDriverWait(driver, 10)
 
+directorio = "C:/Users/mrive/Documents/Trabajo/autoQA"
+
+
+preguntas = list([["Animales Nacionales", "¿Qué animal es el símbolo nacional de Chile?", "Cóndor", "Puma", "Huemul", "Flamenco", 2],
+                        ["Mayor Población", "¿Qué país tiene la mayor población del mundo?", "India", "EE.UU", "China", "Brasil", 2],
+                        ["Instrumentos", "¿Qué instrumento musical tiene teclas blancas y negras?", "Violín", "Guitarra", "Piano", "Flauta", 2],
+                        ["Planetas", "¿Qué planeta es el cuarto más cercano al sol?", "Mercurio", "Saturno", "Tierra", "Marte", 3],
+                        ["Animales", "¿Qué animal tiene alas, plumas y puede volar?", "Elefante", "Pato", "Jirafa", 1],
+                        ["Continentes", "¿Qué continente tiene el mayor número de países?", "Asia", "Africa", "Europa", 1],
+                        ["Planetas 2", "¿Qué planeta es el más pequeño del sistema solar?", "Tierra", "Marte", "Mercurio", 2]])
+
 
 def login():
     # Función para hacer el login en el curso QA
@@ -76,6 +87,8 @@ def formatQA():
     formatbtn = wait.until(EC.visibility_of_element_located(
         (By.ID, 'id_courseformathdr')))
     formatbtn.click()
+    time.sleep(1)
+    driver.execute_script("window.scrollTo(0, "+str(500)+");")
     menuopciones = wait.until(
         EC.visibility_of_element_located((By.ID, 'id_format')))
     menuopciones.click()
@@ -140,7 +153,7 @@ def formatQA():
 
 
 def archivo():
-    directorio_archivo = "assets/pdf.pdf"
+    directorio_archivo = "C:/Users/mrive/Documents/Trabajo/autoQA/assets/pdf.pdf"
 
     wait = WebDriverWait(driver, 10)
 
@@ -332,7 +345,7 @@ def carpeta():
         (By.XPATH, '//input[@id="id_name"]')))
     input_actividad.send_keys(nombre_actividad)
 
-    directorio_archivo = "assets/pdf.pdf"
+    directorio_archivo = "C:/Users/mrive/Documents/Trabajo/autoQA/assets/pdf.pdf"
 
     agregar_archivo = wait.until(EC.element_to_be_clickable(
         (By.XPATH, '//div[starts-with(@class,"fp-btn-add")]')))
@@ -876,7 +889,7 @@ def h5p():
     input_nombre_actividad.send_keys(nombre_actividad)
 
     # Tenemos que subir el paquete de archivos h5p
-    directorio_archivo = "assets/h5p.h5p"
+    directorio_archivo = "C:/Users/mrive/Documents/Trabajo/autoQA/assets/h5p.h5p"
 
     # Vamos al filepicker y subimos el archivo
     agregar_archivo = wait.until(EC.element_to_be_clickable(
@@ -1118,7 +1131,7 @@ def scorm():
         (By.XPATH, '//div[starts-with(@class,"fp-btn-add")]')))
     agregar_archivo.click()
 
-    ruta = "assets/scorm.zip"
+    ruta = "C:/Users/mrive/Documents/Trabajo/autoQA/assets/scorm.zip"
     add_btn = wait.until(EC.element_to_be_clickable(
         (By.XPATH, '//input[@type = "file"]')))
     add_btn.send_keys(ruta)
@@ -1343,8 +1356,389 @@ def urluai():
     screenshooter("urluai", "urluai")
 
     chaoactividad(nombre_actividad, "urluai")
+    
+# QA de página de contenido
+def pagina_contenido():
+    btnactividades("icontent")
+    
+    # Ingresamos el nombre de la actividad y la url externa
+    nombre_actividad = "QA página de contenido"
+    input_nombre_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+    input_nombre_actividad.send_keys(nombre_actividad)
+    
+    #Guardamos y mostramos
+    send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    send_btn.click()	
+    
+    # Ingresamos el título de la página
+    titulo = "Página 1"
+    input_titulo = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_title"]')))
+    input_titulo.send_keys(titulo)
+    # Ingresamos el contenido de la página
+    contenido = "Contenido de la página"
+    input_contenido = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@id="id_pageicontent_editoreditable"]')))
+    input_contenido.send_keys(contenido)
+    # Guardamos cambios
+    send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    send_btn.click()
+    
+    editModeOff()
+    
+    screenshooter("pagina_contenido", "pagina_contenido")
+    
+    chaoactividad(nombre_actividad, "pagina_contenido")
+    
+# Creación de preguntas para realizar los juegos
+def inicio_juegos(preguntas):
+    from selenium.webdriver.support.ui import Select
+    
+    # Se reciben las preguntas de una lista que está en el inicio del código
 
+    # Extraemos el link del banco de preguntas
+    banco_preguntas = wait.until(EC.invisibility_of_element_located((By.XPATH, '//li[@data-key="questionbank"]/a[@role="menuitem"]')))
+    href = banco_preguntas.get_attribute("href")
+    print(href)
+    # Luego redireccionamos a ese link
+    driver.get(href)
+    
+    
+    for i in range(0,4):
+        newquest = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@class="btn btn-secondary"]')))
+        newquest.click()
+        multichoice = wait.until(EC.element_to_be_clickable((By.XPATH, '//label[@for="item_qtype_multichoice"]')))
+        multichoice.click()
+        next_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="submit" and @name="submitbutton"]')))
+        next_btn.click()
+        # Seleccionamos el nombre de la pregunta
+        nombre_pregunta = preguntas[i][0]
+        input_nombre_pregunta = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+        input_nombre_pregunta.clear()
+        input_nombre_pregunta.send_keys(nombre_pregunta)
+        # Seleccionamos el enunciado de la pregunta
+        enunciado = preguntas[i][1]
+        input_enunciado = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@id="id_questiontexteditable"]')))
+        input_enunciado.clear()
+        input_enunciado.send_keys(enunciado)
+        # Seleccionamos las opciones
+        # Opción 1
+        opcion_1 = preguntas[i][2]
+        input_opcion_1 = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@id="id_answer_0editable"]')))
+        input_opcion_1.clear()
+        input_opcion_1.send_keys(opcion_1)
+        # Opción 2
+        opcion_2 = preguntas[i][3]
+        input_opcion_2 = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@id="id_answer_1editable"]')))
+        input_opcion_2.clear()
+        input_opcion_2.send_keys(opcion_2)
+        # Opción 3
+        opcion_3 = preguntas[i][4]
+        input_opcion_3 = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@id="id_answer_2editable"]')))
+        input_opcion_3.clear()
+        input_opcion_3.send_keys(opcion_3)
+        # Opción 4
+        opcion_4 = preguntas[i][5]
+        input_opcion_4 = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@id="id_answer_3editable"]')))
+        input_opcion_4.clear()
+        input_opcion_4.send_keys(opcion_4)
+        # Seleccionamos la respuesta correcta
+        menuopciones = wait.until(EC.visibility_of_element_located((By.XPATH, '//select[@id="id_fraction_'+str(preguntas[i][6])+'"]')))
+        menuopciones.click()
+        selector = Select(menuopciones)
+        selector.select_by_visible_text("100%")
+        # Guardamos cambios
+        send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+        send_btn.click()
+    
+    for i in range(4,7):
+        newquest = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@class="btn btn-secondary"]')))
+        newquest.click()
+        shortquest = wait.until(EC.element_to_be_clickable((By.XPATH, '//label[@for="item_qtype_shortanswer"]')))
+        shortquest.click()
+        next_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="submit" and @name="submitbutton"]')))
+        next_btn.click()
+        # Seleccionamos el nombre de la pregunta
+        nombre_pregunta = preguntas[i][0]
+        input_nombre_pregunta = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+        input_nombre_pregunta.clear()
+        input_nombre_pregunta.send_keys(nombre_pregunta)
+        # Seleccionamos el enunciado de la pregunta
+        enunciado = preguntas[i][1]
+        input_enunciado = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@id="id_questiontexteditable"]')))
+        input_enunciado.clear()
+        input_enunciado.send_keys(enunciado)
+        # Seleccionamos las opciones
+        # Opción 1
+        opcion_1 = preguntas[i][2]
+        input_opcion_1 = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_answer_0"]')))
+        input_opcion_1.clear()
+        input_opcion_1.send_keys(opcion_1)
+        # Opción 2
+        opcion_2 = preguntas[i][3]
+        input_opcion_2 = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_answer_1"]')))
+        input_opcion_2.clear()
+        input_opcion_2.send_keys(opcion_2)
+        # Opción 3
+        opcion_3 = preguntas[i][4]
+        input_opcion_3 = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_answer_2"]')))
+        input_opcion_3.clear()
+        input_opcion_3.send_keys(opcion_3)
+        # Seleccionamos la respuesta correcta
+        menuopciones = wait.until(EC.visibility_of_element_located((By.XPATH, '//select[@id="id_fraction_'+str(preguntas[i][5])+'"]')))
+        menuopciones.click()
+        selector = Select(menuopciones)
+        selector.select_by_visible_text("100%")
+        # Guardamos cambios
+        send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+        send_btn.click()
+    
+    back_to_curso()
 
+# QA de ahorcado
+def ahorcado(preguntas):
+    from selenium.webdriver.support.ui import Select
+    import unidecode
+    
+    btnactividades("Ahorcado")
+    
+    # Ingresamos el nombre del juego
+    nombre_actividad = "QA Ahorcado"
+    input_nombre_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+    input_nombre_actividad.clear()
+    input_nombre_actividad.send_keys(nombre_actividad)
+    
+    select_preguntas = wait.until(EC.element_to_be_clickable((By.XPATH, '//select[@id="id_sourcemodule"]')))
+    selector = Select(select_preguntas)
+    selector.select_by_index(1)
+    
+    banco_preguntas = wait.until(EC.element_to_be_clickable((By.XPATH, '//select[@id="id_questioncategoryid"]')))
+    selector = Select(banco_preguntas)
+    selector.select_by_index(1)
+    
+    # Guardamos y mostramos
+    send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    send_btn.click()
+    editModeOff()
+    screenshooter("ahorcado", "ahorcado_previo")
+    
+    # Jugamos
+    playbtn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@class="btn btn-secondary"]')))
+    playbtn.click()
+    screenshooter("ahorcado", "ahorcado_jugando")
+    
+    # Buscamos cual es la respuesta de la pregunta que salió
+    enunciado = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@role="main"]/b')))
+    print(enunciado.text)
+    for i in range(4,len(preguntas)):
+        if(preguntas[i][1] == enunciado.text):
+            indice_respuesta = preguntas[i][5]
+            respuesta = preguntas[i][indice_respuesta+2]
+            print(f"La respuesta es {respuesta}")
+    
+    # Primero formateamos las letras de la respuesta
+    respuesta = unidecode.unidecode(respuesta)
+    respuesta = respuesta.upper()
+    respuesta = list(set(respuesta))
+    print(respuesta)
+    
+    # Tenemos que seleccionar las letras de la respuesta
+    for i in range(0,len(respuesta)):
+        letra = respuesta[i]
+        print(letra)
+        btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//font/a[contains(text(), "'+letra.upper()+'")]')))
+        btn.click()
+    screenshooter("ahorcado", "ahorcado_resuelto")
+    chaoactividad(nombre_actividad, "ahorcado")
+    
+# QA de criptograma
+def criptograma(preguntas):
+    from selenium.webdriver.support.ui import Select
+     
+    btnactividades("Criptograma")
+    
+    # Ingresamos el nombre del juego
+    nombre_actividad = "QA Criptograma"
+    input_nombre_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+    input_nombre_actividad.clear()
+    input_nombre_actividad.send_keys(nombre_actividad)
+    
+    # Seleciconamos la fuente de preguntas en preguntas
+    select_preguntas = wait.until(EC.element_to_be_clickable((By.XPATH, '//select[@id="id_sourcemodule"]')))
+    selector = Select(select_preguntas)
+    selector.select_by_index(1)
+    
+    # Seleccionamos el banco de preguntas
+    banco_preguntas = wait.until(EC.element_to_be_clickable((By.XPATH, '//select[@id="id_questioncategoryid"]')))
+    selector = Select(banco_preguntas)
+    selector.select_by_index(1)
+    
+    # Guardamos y mostramos
+    send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    send_btn.click()
+    editModeOff()
+    screenshooter("criptograma", "criptograma_previo")
+    
+    # Jugamos
+    playbtn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@class="btn btn-secondary"]')))
+    playbtn.click()
+    screenshooter("criptograma", "criptograma_jugando")
+    
+    # Sabemos que son 3 preguntas para este juego  
+    for i in range(4,len(preguntas)):
+        # Click en el botón respuesta
+        respuesta_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="submit"]')))
+        respuesta_btn.click()
+        
+        enunciado = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="answerbox"]/div[@id="wordclue"]')))
+        print(f"Enunciado: {enunciado.text[3:]}")
+        
+        # Busca la respuesta a la pregunta que está en pantalla
+        for i in range(4,len(preguntas)):
+            if(preguntas[i][1] == enunciado.text[3:]):
+                indice_respuesta = preguntas[i][5]
+                respuesta = preguntas[i][indice_respuesta+2]
+                print(f"La respuesta es {respuesta}")
+        
+        # Ingresamos la respuesta
+        input_respuesta = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="answer"]')))
+        input_respuesta.send_keys(respuesta)
+        if(i == 6):
+            screenshooter("criptograma", "criptograma_jugando")
+        send_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@id="okbutton" and @class="button"]')))
+        send_btn.click()
+    screenshooter("criptograma", "criptograma_resuelto")
+    
+    chaoactividad(nombre_actividad, "criptograma")
+    
+# QA de crucigrama
+def crucigrama(preguntas): # Complicado pero no imposible, queda pendiente
+    from selenium.webdriver.support.ui import Select
+    
+    btnactividades("Crucigrama")
+    
+    # Ingresamos el nombre del juego
+    nombre_actividad = "QA Crucigrama"
+    input_nombre_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+    input_nombre_actividad.clear()
+    input_nombre_actividad.send_keys(nombre_actividad)
+    
+    # Seleciconamos la fuente de preguntas en preguntas
+    select_preguntas = wait.until(EC.element_to_be_clickable((By.XPATH, '//select[@id="id_sourcemodule"]')))
+    selector = Select(select_preguntas)
+    selector.select_by_index(1)
+    
+    # Seleccionamos el banco de preguntas
+    banco_preguntas = wait.until(EC.element_to_be_clickable((By.XPATH, '//select[@id="id_questioncategoryid"]')))
+    selector = Select(banco_preguntas)
+    selector.select_by_index(1)
+    
+    # Guardamos y mostramos
+    send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    send_btn.click()
+    editModeOff()
+    screenshooter("crucigrama", "crucigrama_previo")
+    
+    # Jugamos
+    playbtn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@class="btn btn-secondary"]')))
+    playbtn.click()
+    screenshooter("crucigrama", "crucigrama_jugando")
+    
+    
+    # Contamos la cantidad de filas y columnas que hay con Javascript
+    cantidad_filas = driver.execute_script("return CrosswordHeight;")
+    cantidad_columnas = driver.execute_script("return CrosswordWidth;")
+    print(f"Cantidad de filas: {cantidad_filas}")
+    print(f"Cantidad de columnas: {cantidad_columnas}")
+    
+    for i in range(1, cantidad_columnas+1):
+        for j in range(1,cantidad_filas+1):
+            # Seleccionamos la primera casilla disponible de la primera fila 
+            if(i == 2 and j == 1):
+                screenshooter("crucigrama", "crucigrama_jugando")
+                    
+            casilla = wait.until(EC.element_to_be_clickable((By.XPATH, '//table[@id="crossword"]/tbody/tr['+str(j+1)+']/td['+str(i+1)+']')))
+            if(casilla.get_attribute("id")):
+                print("La casilla existe")
+            else: 
+                print("La casilla no existe")
+                continue
+            casilla.click()
+            # Revisamos si es que la casilla ya está rellena según su valor
+            if(casilla.text):
+                print("La casilla ya está rellena")
+                continue
+            else:
+                print("La casilla está vacía")
+            
+            enunciado = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@id="answerbox"]/div[@id="wordclue"]')))
+            print(f"Enunciado: {enunciado.text}")
+                
+            # Busca la respuesta a la pregunta que está en pantalla
+            for i in range(4,len(preguntas)):
+                if(preguntas[i][1] == enunciado.text):
+                    indice_respuesta = preguntas[i][5]
+                    respuesta = preguntas[i][indice_respuesta+2]
+                    print(f"La respuesta es {respuesta}")
+                
+            # Ingresamos la respuesta
+            input_respuesta = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="wordentry"]')))
+            input_respuesta.send_keys(respuesta)
+            send_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@id="okbutton" and @class="button"]')))
+            send_btn.click()
+    screenshooter("crucigrama", "crucigrama_resuelto")        
+    
+    chaoactividad(nombre_actividad, "crucigrama")
+    
+# QA de millonario
+def millonario(preguntas):
+    from selenium.webdriver.support.ui import Select
+    
+    btnactividades("Millonario")
+    
+    # Ingresamos el nombre del juego
+    nombre_actividad = "QA Millonario"
+    input_nombre_actividad = wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@id="id_name"]')))
+    input_nombre_actividad.clear()
+    input_nombre_actividad.send_keys(nombre_actividad)
+    
+    # Seleccionamos la fuente de preguntas en preguntas
+    select_preguntas = wait.until(EC.element_to_be_clickable((By.XPATH, '//select[@id="id_sourcemodule"]')))
+    selector = Select(select_preguntas)
+    selector.select_by_index(0)
+    
+    # Seleccionamos el banco de preguntas
+    banco_preguntas = wait.until(EC.element_to_be_clickable((By.XPATH, '//select[@id="id_questioncategoryid"]')))
+    selector = Select(banco_preguntas)
+    selector.select_by_index(1)
+    
+    # Guardamos y mostramos
+    send_btn = wait.until(EC.element_to_be_clickable((By.ID, 'id_submitbutton')))
+    send_btn.click()
+    editModeOff()
+    screenshooter("millonario", "millonario_previo")
+    
+    # Jugamos
+    playbtn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@class="btn btn-secondary"]')))
+    playbtn.click()
+    screenshooter("millonario", "millonario_jugando")
+    
+    for i in range(0,15):
+        # Leemos cual es la pregunta
+        enunciado = wait.until(EC.visibility_of_element_located((By.XPATH, '//div[@role="main"]/form[@name="Form1"]/table/tbody/tr[5]/td[1]')))
+        print(f"La pregunta es: {enunciado.text}")
+        # Busca la respuesta a la pregunta que está en pantalla 
+        for i in range(0,len(preguntas)):
+            if(preguntas[i][1] == enunciado.text):
+                indice_respuesta = preguntas[i][6]
+                respuesta = preguntas[i][indice_respuesta+2]
+                print(f"La respuesta es {respuesta}")
+        # Luego con la respuesta, seleccionamos la opción correcta
+        btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//td[following-sibling::td/span[text()="'+respuesta+'"]]')))
+        btn.click()
+    
+    screenshooter("millonario", "millonario_resuelto")
+    
+    chaoactividad(nombre_actividad, "millonario")
+    
 def screenshooter(carpeta, opcion):
     # Saca fotos de las páginas
     ## Sacar screenshots de las páginas##
@@ -1382,17 +1776,21 @@ def screenshooter(carpeta, opcion):
     driver.execute_script("window.scrollTo(0, 0);")
 
 
+# Generalización para acceder a las actividades y recursos
 def btnactividades(actividad):
-    # Generalización para acceder a las actividades y recursos
     editMode()
-    actividades_btn = wait.until(EC.element_to_be_clickable(
-        (By.XPATH, '//button[@data-action="open-chooser"]')))
-    actividades_btn.click()
-
-    # Hacemos click en la actividad requerida
-    btn = wait.until(EC.element_to_be_clickable(
-        (By.XPATH, '//div[@data-internal="'+actividad+'"]')))
-    btn.click()
+    actividades_btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@data-action="open-chooser"]')))
+    actividades_btn.click()  
+    
+    if(actividad in ["Ahorcado", "Criptograma", "Crucigrama", "Millonario"]):
+        # Seleccionamos el tipo de juego
+        print("Es un juego")
+        btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@aria-label="Juego - '+actividad+'"]')))
+        btn.click()
+    else:
+        # Hacemos click en la actividad requerida
+        btn = wait.until(EC.element_to_be_clickable((By.XPATH, '//div[@data-internal="'+actividad+'"]')))
+        btn.click()
 
 
 def back_to_curso():
@@ -1400,8 +1798,8 @@ def back_to_curso():
     driver.get(f"{URL}/course/view.php?id={COURSE}")
 
 
+# Función que nos permite sacar fotos de como se ve la actividad en la página principal del curso y luego eliminar esta actividad
 def chaoactividad(nombre, carpeta):
-    # Función que nos permite sacar fotos de como se ve la actividad en la página principal del curso y luego eliminar esta actividad
     back_to_curso()
 
     if not carpeta == None:
@@ -1417,7 +1815,6 @@ def chaoactividad(nombre, carpeta):
     delete_btn = wait.until(EC.visibility_of_element_located(
         (By.XPATH, '//div[contains(@data-activityname, "'+nombre+'")]/div/div/div/div/div[starts-with(@id, "action-menu-")]/div/div/a[@data-action="delete"]')))
     delete_btn.click()
-    # /div/div/div/div/div[starts-with(@id, "action-menu-")]
 
     yes_btn = wait.until(EC.element_to_be_clickable(
         (By.XPATH, '//button[@type="button" and @class="btn btn-primary"]')))
@@ -1433,10 +1830,7 @@ def prueba():
     certificado()
     chat()
     consulta()
-    cuestionario()
-    encuesta()
-    encuesta2()
-    encuestapredefinida()
+    # encuestapredefinida() #Ya no está dentro de los recursos disponibles
     glosario()
     h5p()
     herramienta_externa()
@@ -1451,6 +1845,16 @@ def prueba():
     wiki()
     url()
     urluai()
+    pagina_contenido() 
+    inicio_juegos(preguntas) 
+    ahorcado(preguntas) 
+    criptograma(preguntas) 
+    crucigrama(preguntas) 
+    millonario(preguntas) 
+    cuestionario() #Debe funcionar después de millonario, ya que crea nuevas preguntas que el juego millonario luego puede tomar como fuente y se rompe
+    encuesta() 
+    encuesta2()
+    cuestionario() 
 
 
 login()
