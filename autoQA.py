@@ -37,6 +37,22 @@ def login():
     # hacer click en el botón acceder
     driver.find_element(By.ID, "loginbtn").click()
 
+def login_autenticacion():
+    # Ingreso a moodlecloud 
+    driver.get(f"{URL}/course/view.php?id={COURSE}")
+    driver.maximize_window()
+    
+    wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@title="Microsoft"]'))).click()
+
+    # #ingresar los datos de usuario
+    wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="email"]'))).send_keys(USER)
+    wait.until(EC.element_to_be_clickable((By.XPATH,'//input[@type="submit"]'))).click()
+    wait.until(EC.element_to_be_clickable((By.XPATH, '//input[@type="password"]'))).send_keys(PASS)
+    wait.until(EC.element_to_be_clickable((By.XPATH,'//input[@type="submit"]'))).click()
+    
+    time.sleep(5)
+    
+    
 
 def editMode():
     # seleccionar el modo de edición si este está desactivado
@@ -153,7 +169,7 @@ def formatQA():
 
 
 def archivo():
-    directorio_archivo = "C:/Users/mrive/Documents/Trabajo/autoQA/assets/pdf.pdf"
+    directorio_archivo = f"{directorio}/assets/pdf.pdf"
 
     wait = WebDriverWait(driver, 10)
 
@@ -345,7 +361,7 @@ def carpeta():
         (By.XPATH, '//input[@id="id_name"]')))
     input_actividad.send_keys(nombre_actividad)
 
-    directorio_archivo = "C:/Users/mrive/Documents/Trabajo/autoQA/assets/pdf.pdf"
+    directorio_archivo = f"{directorio}/assets/pdf.pdf"
 
     agregar_archivo = wait.until(EC.element_to_be_clickable(
         (By.XPATH, '//div[starts-with(@class,"fp-btn-add")]')))
@@ -889,7 +905,7 @@ def h5p():
     input_nombre_actividad.send_keys(nombre_actividad)
 
     # Tenemos que subir el paquete de archivos h5p
-    directorio_archivo = "C:/Users/mrive/Documents/Trabajo/autoQA/assets/h5p.h5p"
+    directorio_archivo = f"{directorio}/assets/h5p.h5p"
 
     # Vamos al filepicker y subimos el archivo
     agregar_archivo = wait.until(EC.element_to_be_clickable(
@@ -1827,43 +1843,44 @@ def dark_mode():
 # //*[@id="usernavigation"]/div[5]
 
 def prueba():
-    formatQA()
-    # archivo()
-    # area_textos_medios()
-    # autoseleccion_grupos()
-    # base_de_datos()
-    # certificado()
-    # chat()
-    # consulta()
-    # # encuestapredefinida() #Ya no está dentro de los recursos disponibles
-    # glosario()
-    # h5p()
-    # herramienta_externa()
-    # laboratorio()
-    # leccion()
-    # libro()
-    # pagina()
-    # scorm()
-    # poster()
-    # taller()
-    # tarea()
-    # wiki()
-    # url()
-    # urluai()
-    # pagina_contenido() 
-    # inicio_juegos(preguntas) 
-    # ahorcado(preguntas) 
-    # criptograma(preguntas) 
-    # crucigrama(preguntas) 
-    # millonario(preguntas) 
-    # cuestionario() #Debe funcionar después de millonario, ya que crea nuevas preguntas que el juego millonario luego puede tomar como fuente y se rompe
-    # encuesta() 
-    # encuesta2()
-    # cuestionario() 
+    # formatQA()
+    archivo()
+    area_textos_medios()
+    autoseleccion_grupos()
+    base_de_datos()
+    certificado()
+    chat()
+    consulta()
+    # encuestapredefinida() #Ya no está dentro de los recursos disponibles
+    glosario()
+    h5p()
+    herramienta_externa()
+    laboratorio()
+    leccion()
+    libro()
+    pagina()
+    scorm()
+    poster()
+    taller()
+    tarea()
+    wiki()
+    url()
+    urluai()
+    pagina_contenido() 
+    inicio_juegos(preguntas) 
+    ahorcado(preguntas) 
+    criptograma(preguntas) 
+    crucigrama(preguntas) 
+    millonario(preguntas) 
+    cuestionario() #Debe funcionar después de millonario, ya que crea nuevas preguntas que el juego millonario luego puede tomar como fuente y se rompe
+    encuesta() 
+    encuesta2()
+    cuestionario() 
 
 
-login()
-dark_mode()
+# login()
+login_autenticacion()
+# dark_mode()
 prueba()
 
 time.sleep(5)
